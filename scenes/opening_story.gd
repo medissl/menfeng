@@ -128,6 +128,9 @@ const TAPE_ONE := [
 	["做完了再回來。阿嬤還有話要跟你說。", "Come back when you’re done. Ah Ma has something else to tell you."],
 ]
 const TAPE_GLANCE_BEAT := 7
+const TAPE_ONE_REWATCH := TAPE_ONE + [
+	["倒帶的聲音，我聽得到。", "I can hear you rewinding."],
+]
 
 const TAPE_TWO := [
 	["你還記得阿公那張小照片嗎？", "Do you remember that little picture of Grandpa?"],
@@ -164,7 +167,9 @@ const TAPE_FIVE := [
 	["以前我跟你說，我去醫院是去檢查。你還把糖塞進我的包包。", "I used to tell you I was going to the hospital for a checkup. You’d slip a sweet into my bag."],
 	["我是去拿那些沒能出生的孩子的遺體。你在罐子裡看到的，就是他們。", "I went for the remains of babies who never got to be born. That’s what you saw in the jar."],
 	["我每天晚上燒。有幾年我還在數。後來數到幾千，就不敢再數了。", "I burned them every night. For years I kept count. I’d reached the thousands when I stopped counting."],
+	["火熄了，他就吞那些孩子的魂。逃掉的，就躲在屋裡。", "Once the fire went out, he swallowed their souls. The ones who slipped past him hid in the house."],
 	["有時我聽到小孩跑過走廊。你阿公一靠近，聲音就停了。", "Sometimes I heard children running in the hall. Whenever your grandpa came close, it went quiet."],
+	["到後來，他一開口，有時候是小孩子的聲音。", "By the end, he sometimes spoke in a child’s voice."],
 	["最近，燒了也沒用。昨晚我站在浴室，手抓著井邊。", "Lately it hasn’t been enough. Last night I was in the bathroom with my hands on the well."],
 	["我叫自己的手放開。它們反而抓得更緊。", "I told my hands to let go. They held on tighter."],
 	["我先叫你點香、倒茶。那些事你都熟。我怕一開始就講，你會直接走。", "I started with incense and tea because you knew how. I thought you’d leave if I told you everything at once."],
@@ -175,6 +180,7 @@ const TAPE_FIVE := [
 
 const TAPE_SIX := [
 	["火熄了嗎？你可以坐一下了。坐阿嬤平常坐的地方。", "Has the fire gone out? You can sit down now. Where Ah Ma used to sit."],
+	["你爸不知道這些。他有問過。是我每次都跟他說沒事。", "Your dad never knew. He used to ask. I always told him I was fine."],
 	["我以前叫你怕就來找我。這一次，換我來找你。", "I used to tell you to come get me if you were scared. This time I’ll come to you."],
 	["先把眼睛閉起來。想睜開的時候，再睜開。", "Close your eyes first. Open them when you’re ready."],
 	["阿嬤在這裡。", "Ah Ma is here."],
@@ -231,10 +237,25 @@ const FIRE_BEATS := [
 	"The fire sank below the opening. The kitchen, the eaves, and the trees beyond them had all gone quiet.",
 ]
 const SIT_DOWN := [
-	"I sat where her weight had pressed the cushion flat. The other cushion rose a little against my leg.",
-	"I’d spent years thinking the empty seat belonged to someone she missed.",
+	"I sat where her weight had pressed the cushion flat. The lace slipped down the back of the couch.",
+	"From there I could see where she used to stand and wait for me to put my shoes on before we left.",
+	"Dad said to tell her I was home. I’d said it in the car. It was harder to say now.",
 ]
-const FINAL_LINE := "Behind him, something held her by the throat. I waited for her to tell me to go back to bed."
+const BEDROOM_ECHO := [
+	"I’d left the door open when I came in. Now the latch was down.",
+	"I’d forgotten how low I used to get to see the light.",
+	"Something ran towards the bed. Every step was on my side of the door.",
+	"I kept my feet on the floor. I was afraid it would hear me lift them.",
+]
+const RECEIPT_BACK := [
+	"On the other side, in Ah Ma’s pencil, there were two sentences.",
+	"“You called me from the bedroom three nights running. The last time, you were already in my arms.”",
+	"I tried to remember what she’d said to me at breakfast that last morning.",
+]
+const FINAL_LINE := "She reached for me. The chain went tight before her fingers got to mine."
+const AFTERMATH := [
+	"Dad wanted me to call in the morning. I kept wondering what I’d say when he asked if I’d said goodbye.",
+]
 
 
 const OFFERING_ITEMS := {

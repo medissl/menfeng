@@ -3,7 +3,7 @@ extends Control
 enum Screen {
 	TITLE, INTRO, DRIVE, YARD, HALL, MEMORY, PEEK, MORNING,
 	SITTING, GUEST_BEDROOM, BEDROOM, KITCHEN, BATHROOM, BURN_AREA, TAPE, SOFA_MEMORY,
-	WARDROBE, VESSEL_OPEN, WELL_MEMORY, MARKED, BURNING, COUCH, EYES_CLOSED, REVEAL,
+	WARDROBE, VESSEL_OPEN, WELL_MEMORY, MARKED, BURNING, COUCH, EYES_CLOSED, REVEAL, BEDROOM_ECHO, AFTERMATH,
 }
 enum Overlay { NONE, PAUSE, SETTINGS, INVENTORY, INSTRUCTION }
 enum Stage {
@@ -15,7 +15,7 @@ enum Stage {
 enum RitualAction {
 	NONE, TAKE, PLACE, LIGHT, TURN_PORTRAIT, TAKE_PORTRAIT, PLACE_PORTRAIT,
 	TAKE_OFFERING, USE_OFFERING, LIFT_BOARD, TAKE_VESSEL, SET_VESSEL, OPEN_VESSEL,
-	TAKE_CHALK, MARK_FOREHEAD, PLACE_PAPER, BURN_OFFERING, CLOSE_EYES, OPEN_EYES,
+	TAKE_CHALK, MARK_FOREHEAD, PLACE_PAPER, BURN_OFFERING, CLOSE_EYES, OPEN_EYES, TURN_RECEIPT,
 }
 enum DrivePart { ROAD, RINGING, CALL, AFTER_CALL }
 
@@ -44,8 +44,10 @@ const RITE_CHANT := preload("res://assets/audio/rite-chant.wav")
 const OFFERING_FIRE := preload("res://assets/audio/offering-fire.wav")
 const COUCH_SHIFT := preload("res://assets/audio/couch-shift.wav")
 const GRANDPA_LAUGH := preload("res://assets/audio/ghost-laugh.wav")
+const WRIST_CHAIN := preload("res://assets/audio/wrist-chain.wav")
 const VESSEL := preload("res://assets/finale/vessel.png")
 const HOSPITAL_SLIPS := preload("res://assets/finale/hospital-slips.png")
+const RECEIPT_BACK := preload("res://assets/finale/receipt-back.png")
 const CHALK_TIN := preload("res://assets/finale/chalk-tin.png")
 const WARDROBE_SHELF := preload("res://assets/finale/wardrobe-shelf.jpg")
 const WARDROBE_CAVITY := preload("res://assets/finale/wardrobe-cavity.jpg")
@@ -118,6 +120,8 @@ const VIEWS := {
 	Screen.COUCH: [TV_SEATED, ""],
 	Screen.EYES_CLOSED: [null, ""],
 	Screen.REVEAL: [preload("res://assets/finale/sitting-reveal.jpg"), ""],
+	Screen.BEDROOM_ECHO: [preload("res://assets/finale/bedroom-echo.jpg"), ""],
+	Screen.AFTERMATH: [null, ""],
 }
 
 const RETURN_TO := {
@@ -145,6 +149,8 @@ const NARRATION := {
 	Screen.MORNING: StoryText.BREAKFAST,
 	Screen.SOFA_MEMORY: StoryText.SOFA_MEMORY,
 	Screen.WELL_MEMORY: StoryText.WELL_RECONSTRUCTION,
+	Screen.BEDROOM_ECHO: StoryText.BEDROOM_ECHO,
+	Screen.AFTERMATH: StoryText.AFTERMATH,
 	Screen.VESSEL_OPEN: StoryText.VESSEL_INSIDE,
 	Screen.MARKED: StoryText.FOREHEAD_MARK,
 	Screen.BURNING: StoryText.FIRE_BEATS,
@@ -297,6 +303,7 @@ var slips_read := false
 var vessel_at_burner := false
 var vessel_opened := false
 var reveal_readable := false
+var bedroom_echo_seen := false
 var reading_note := false
 var tape_chapter := 1
 var tape_line := -1
@@ -447,6 +454,7 @@ func _advance(perform_action := false) -> void:
 			ritual_action = RitualAction.NONE
 			inspection_lines.clear()
 			%PortraitInscription.hide()
+			%ReceiptInscription.hide()
 			_set_inspection_zoom(Vector2(0.5, 0.5), 0.0, false, true)
 			_show_exploration()
 		return
@@ -459,6 +467,10 @@ func _advance(perform_action := false) -> void:
 				_start_chant()
 			elif screen in [Screen.MEMORY, Screen.PEEK] and chant.playing:
 				_show_sound_cue("Muffled chanting behind the door")
+			if screen == Screen.PEEK and narration_index == 1:
+				_play_scare(WRIST_CHAIN, -17.0, "Soft metal clicks behind the door")
+			elif screen == Screen.BEDROOM_ECHO and narration_index == 2:
+				_play_scare(WOOD_RUN, -12.0, "Light footsteps on this side of the door")
 			if screen == Screen.WELL_MEMORY and narration_index == 2:
 				_play_scare(WELL_ROPE, -5.0, "Rope scrapes the rim. Water breaks far below.")
 			if screen == Screen.HALL and narration_index == lines.size() - 1:
@@ -482,6 +494,8 @@ func _advance(perform_action := false) -> void:
 		_show_exploration()
 	elif screen == Screen.PEEK:
 		_show_screen(Screen.MORNING)
+	elif screen == Screen.BEDROOM_ECHO:
+		_show_screen(Screen.GUEST_BEDROOM)
 	elif screen == Screen.SOFA_MEMORY:
 		seen_arrivals.append(Screen.SOFA_MEMORY)
 		_show_screen(Screen.SITTING)
@@ -505,6 +519,8 @@ func _advance(perform_action := false) -> void:
 		ritual_action = RitualAction.CLOSE_EYES
 		_set_action_label("Close your eyes")
 	elif screen == Screen.REVEAL and reveal_readable:
+		_show_screen(Screen.AFTERMATH)
+	elif screen == Screen.AFTERMATH:
 		_return_to_title()
 
 
@@ -609,6 +625,7 @@ func _enter_screen(next: Screen) -> void:
 		slips_read = false
 		vessel_at_burner = false
 		vessel_opened = false
+		bedroom_echo_seen = false
 		held_item = &""
 	screen = next
 	reveal_readable = false
@@ -626,6 +643,7 @@ func _enter_screen(next: Screen) -> void:
 	ritual_action = RitualAction.NONE
 	_clear_hotspots()
 	%PortraitInscription.hide()
+	%ReceiptInscription.hide()
 	_set_inspection_zoom(Vector2(0.5, 0.5), 0.0, true)
 	var view: Array = VIEWS[next]
 	var on_title := screen == Screen.TITLE
@@ -659,10 +677,11 @@ func _enter_screen(next: Screen) -> void:
 	if on_intro:
 		_update_intro(0.0)
 	%TitleShade.visible = on_title
+	%ReadingShade.modulate.a = 0.43 if screen == Screen.REVEAL else 1.0
 	%TapePanel.visible = screen == Screen.TAPE
 	%TVSignal.visible = screen == Screen.TAPE
 	%TapeMessage.hide()
-	%Pause.visible = screen not in [Screen.EYES_CLOSED, Screen.REVEAL]
+	%Pause.visible = screen not in [Screen.EYES_CLOSED, Screen.REVEAL, Screen.AFTERMATH]
 	if screen == Screen.TAPE:
 		%TapePicture.texture = TAPE_FRAME
 		_update_tape_controls()
@@ -701,7 +720,9 @@ func _finish_transition() -> void:
 	elif screen == Screen.COUCH:
 		_play_scare(COUCH_SHIFT, -9.0, "")
 	elif screen == Screen.REVEAL:
-		_play_scare(GRANDPA_LAUGH, -5.5, "A laugh right beside you")
+		_queue_scare(WRIST_CHAIN, -10.0, "Chain links scrape together", 0.72)
+		scare_sequence.tween_interval(WRIST_CHAIN.get_length() + 0.37)
+		scare_sequence.tween_callback(_play_scare.bind(GRANDPA_LAUGH, -9.0, "A quiet laugh behind Ah Ma"))
 	_update_objective()
 	if screen not in [Screen.INTRO, Screen.REVEAL]:
 		var target := hotspots[0] if keyboard_navigation and not hotspots.is_empty() else _default_focus()
@@ -942,10 +963,15 @@ func _show_memory_gap() -> void:
 func _inspect(entry: Array, area: Rect2) -> void:
 	_clear_hotspots()
 	var item: String = entry[0]
-	if item == "Old bed" and not remembered_door:
-		settle.play()
-		_show_screen(Screen.MEMORY)
-		return
+	if item == "Old bed":
+		if not remembered_door:
+			settle.play()
+			_show_screen(Screen.MEMORY)
+			return
+		if stage >= Stage.RETURN_TO_WELL and not bedroom_echo_seen:
+			bedroom_echo_seen = true
+			_show_screen(Screen.BEDROOM_ECHO)
+			return
 	if item == "TV and VHS deck" and stage >= Stage.WATCH_TAPE:
 		_open_tape(_latest_tape_chapter())
 		return
@@ -1052,6 +1078,10 @@ func _prepare_inspection(item: String) -> String:
 			ritual_action = RitualAction.LIFT_BOARD
 			return "Pull up the board"
 		"Hospital slips":
+			if stage >= Stage.RETURN_TO_WELL:
+				inspection_lines = ["The last slip was folded inward. There was pencil writing on the back."]
+				ritual_action = RitualAction.TURN_RECEIPT
+				return "Turn over the slip"
 			slips_read = true
 			_check_vessel_ready()
 		"Clay vessel":
@@ -1166,6 +1196,11 @@ func _prepare_burner() -> String:
 
 func _perform_ritual_action() -> void:
 	match ritual_action:
+		RitualAction.TURN_RECEIPT:
+			inspection_prop.texture = RECEIPT_BACK
+			%ReceiptInscription.show()
+			page_turn.play()
+			inspection_lines = StoryText.RECEIPT_BACK.duplicate()
 		RitualAction.LIFT_BOARD:
 			shelf_lifted = true
 			_show_screen(Screen.WARDROBE)
@@ -1513,8 +1548,14 @@ func _on_tape_sound_finished() -> void:
 		_next_tape_line()
 
 
+func _tape_lines() -> Array:
+	if tape_chapter == 1 and stage >= Stage.RETURN_TO_WELL:
+		return StoryText.TAPE_ONE_REWATCH
+	return TAPE_CHAPTERS[tape_chapter - 1]
+
+
 func _next_tape_line() -> void:
-	var lines: Array = TAPE_CHAPTERS[tape_chapter - 1]
+	var lines := _tape_lines()
 	tape_line = maxi(0, tape_line + 1)
 	if tape_line < lines.size():
 		var last_card := tape_chapter == 6 and tape_line == lines.size() - 1
@@ -1523,7 +1564,9 @@ func _next_tape_line() -> void:
 			%TapePicture.texture = FINAL_TAPE_CARD
 		elif tape_chapter == 4 and tape_line in [3, 4]:
 			%TapePicture.texture = INVITATION_STILL
-		elif (tape_chapter == 1 and tape_line == StoryText.TAPE_GLANCE_BEAT) or (tape_chapter == 5 and tape_line in [4, 5, 6, 7]):
+		elif tape_chapter == 1 and (tape_line == StoryText.TAPE_GLANCE_BEAT or tape_line == StoryText.TAPE_ONE.size()):
+			%TapePicture.texture = TAPE_GLANCE
+		elif tape_chapter == 5 and tape_line >= 4 and tape_line < 10:
 			%TapePicture.texture = TAPE_GLANCE
 		else:
 			%TapePicture.texture = TAPE_FRAME
@@ -1569,7 +1612,7 @@ func _pause_tape() -> void:
 
 
 func _update_tape_controls() -> void:
-	var count: int = TAPE_CHAPTERS[tape_chapter - 1].size()
+	var count := _tape_lines().size()
 	var active := tape_line >= 0 and tape_line < count
 	%TapeDeck.disabled = tape_line == -2
 	var label := "Resume tape" if tape_paused else "Pause tape" if active else "Replay tape" if tape_line >= count else "Play tape"
@@ -1594,7 +1637,7 @@ func _use_tape_deck() -> void:
 
 
 func _tape_is_playing() -> bool:
-	var count: int = TAPE_CHAPTERS[tape_chapter - 1].size()
+	var count := _tape_lines().size()
 	return tape_line >= 0 and tape_line < count
 
 
