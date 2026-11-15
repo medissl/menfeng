@@ -36,6 +36,9 @@ uniform int vessel_location = 0;
 uniform bool burner_paper = false;
 uniform float house_dread = 0.0;
 uniform bool reveal_glitch = false;
+uniform sampler2D reveal_stare : source_color, filter_linear;
+uniform float reveal_grandpa = 0.0;
+uniform float reveal_ah_ma = 0.0;
 uniform sampler2D watcher : source_color, filter_linear;
 uniform vec4 watcher_area = vec4(0.0, 0.0, 1.0, 1.0);
 uniform float watcher_strength = 0.0;
@@ -153,8 +156,18 @@ vec3 add_ancestor_incense(vec3 room, vec2 uv) {
 	return room;
 }
 
+float face_window(vec2 uv, vec4 bounds) {
+	vec2 margin = min(uv - bounds.xy, bounds.zw - uv);
+	return smoothstep(0.0, 0.025, min(margin.x, margin.y));
+}
+
 // Every sampling tap reads the room with its placed props already composited.
 vec3 sample_room(vec3 room, vec2 uv) {
+	if (reveal_grandpa > 0.0 || reveal_ah_ma > 0.0) {
+		float grandpa = reveal_grandpa * face_window(uv, vec4(0.58, 0.017, 0.84, 0.44));
+		float ah_ma = reveal_ah_ma * face_window(uv, vec4(0.37, 0.50, 0.72, 1.06));
+		room = mix(room, texture(reveal_stare, uv).rgb, max(grandpa, ah_ma));
+	}
 	if (family_portrait) {
 		// The vacant spot on the rear shelf beside Ah Ma's portrait.
 		vec2 pos = close_altar ? vec2(0.765, 0.158) : vec2(0.346, 0.352);

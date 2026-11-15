@@ -3,13 +3,13 @@ extends Control
 enum Screen {
 	TITLE, INTRO, DRIVE, YARD, HALL, MEMORY, PEEK, MORNING,
 	SITTING, GUEST_BEDROOM, BEDROOM, KITCHEN, BATHROOM, BURN_AREA, TAPE, SOFA_MEMORY,
-	WARDROBE, VESSEL_OPEN, RITUAL_MEMORY, MARKED, BURNING, LISTEN, REVEAL, BEDROOM_ECHO, AFTERMATH, CREDITS,
+	WARDROBE, VESSEL_OPEN, RITUAL_MEMORY, MARKED, BURNING, LISTEN, REVEAL, BEDROOM_ECHO, OUTRO_BLACK, CREDITS, END_CARD,
 }
 enum Overlay { NONE, PAUSE, SETTINGS, INVENTORY, INSTRUCTION }
 enum Stage {
 	ARRIVAL, RESPECTS, NOTE, WATCH_TAPE, TAKE_INCENSE, PLACE_INCENSE, LIGHT_INCENSE,
 	RETURN_TO_TAPE, TAKE_PORTRAIT, PLACE_PORTRAIT, OFFERINGS_TAPE, PREPARE_OFFERINGS, INVITATION_TAPE,
-	TAKE_VESSEL, CONFESSION_TAPE, RETURN_TO_WELL, TAKE_CHALK, MARK_FOREHEAD, PLACE_PAPER,
+	TAKE_VESSEL, PREPARATION_TAPE, RETURN_TO_WELL, TAKE_CHALK, MARK_FOREHEAD, PLACE_PAPER,
 	BURN_OFFERING, FINAL_TAPE, FINISHED,
 }
 enum RitualAction {
@@ -53,9 +53,13 @@ const WARDROBE_CAVITY := preload("res://assets/finale/wardrobe-cavity.jpg")
 const VESSEL_INTERIOR := preload("res://assets/finale/vessel-interior.jpg")
 const MARKED_FINGERS := preload("res://assets/finale/marked-fingers.jpg")
 const LIT_BURNER := preload("res://assets/finale/lit-burner.jpg")
-const FINAL_TAPE_CARD := preload("res://assets/finale/tape-card.jpg")
+const TAPE_CRYING := preload("res://assets/ritual/ah-ma-tape-crying.jpg")
+const REVEAL_STARE := preload("res://assets/finale/doorway-stare.jpg")
 const TV_SEATED := preload("res://assets/ritual/crt-seated.jpg")
 const REVEAL_FADE := 0.65
+const REVEAL_SILENCE := 1.5
+const FINAL_LINE_HOLD := 2.6
+const OUTRO_BLACK_HOLD := 1.2
 const WATCHER := preload("res://assets/finale/passage-watcher.png")
 const CUP_NAMES := ["Left cup", "Middle cup", "Right cup"]
 
@@ -71,7 +75,7 @@ const OBJECTIVES := {
 	Stage.PLACE_PORTRAIT: "Hold Grandpa’s portrait and take it to the ancestor altar.",
 	Stage.OFFERINGS_TAPE: "Return to the TV for Chapter 3.",
 	Stage.INVITATION_TAPE: "Return to the TV for Chapter 4.",
-	Stage.CONFESSION_TAPE: "Return to the TV for Chapter 5.",
+	Stage.PREPARATION_TAPE: "Return to the TV for Ah Ma’s last instructions.",
 	Stage.RETURN_TO_WELL: "Go back to the well in the bathroom.",
 	Stage.TAKE_CHALK: "Find the small tin on Ah Ma’s dresser.",
 	Stage.MARK_FOREHEAD: "Hold Ah Ma’s tin and use it at the ancestor altar.",
@@ -82,6 +86,11 @@ const OBJECTIVES := {
 
 const StoryText := preload("res://scenes/opening_story.gd")
 const TAPE_CHAPTERS := StoryText.TAPES
+const CONFESSION_FLASHBACKS := {
+	StoryText.CONFESSION_NIGHT_BEAT: Screen.MEMORY,
+	StoryText.CONFESSION_DAY_BEAT: Screen.RITUAL_MEMORY,
+	StoryText.CONFESSION_SOFA_BEAT: Screen.SOFA_MEMORY,
+}
 const VIEWS := {
 	Screen.TITLE: [PASSAGE, ""],
 	Screen.INTRO: [PASSAGE, ""],
@@ -120,7 +129,8 @@ const VIEWS := {
 	Screen.CREDITS: [null, ""],
 	Screen.REVEAL: [preload("res://assets/finale/sitting-reveal.jpg"), ""],
 	Screen.BEDROOM_ECHO: [preload("res://assets/finale/bedroom-echo.jpg"), ""],
-	Screen.AFTERMATH: [null, ""],
+	Screen.OUTRO_BLACK: [null, ""],
+	Screen.END_CARD: [null, ""],
 }
 
 const RETURN_TO := {
@@ -149,7 +159,6 @@ const NARRATION := {
 	Screen.SOFA_MEMORY: StoryText.SOFA_MEMORY,
 	Screen.RITUAL_MEMORY: StoryText.RITUAL_MEMORY,
 	Screen.BEDROOM_ECHO: StoryText.BEDROOM_ECHO,
-	Screen.AFTERMATH: StoryText.AFTERMATH,
 	Screen.VESSEL_OPEN: StoryText.VESSEL_INSIDE,
 	Screen.MARKED: StoryText.FOREHEAD_MARK,
 	Screen.BURNING: StoryText.FIRE_BEATS,
@@ -301,7 +310,6 @@ var shelf_lifted := false
 var slips_read := false
 var vessel_at_burner := false
 var vessel_opened := false
-var reveal_readable := false
 var bedroom_echo_seen := false
 var returned_to_hall_after_burn := false
 var reading_note := false
@@ -318,7 +326,6 @@ var text_reveal: Tween
 var intro_time := 0.0
 var intro_glitch_started := false
 var seen_arrivals: Array[Screen] = []
-var confession_memory_seen := false
 var confession_resume_pending := false
 var first_watcher_seen := false
 var passing_watcher_seen := false
@@ -342,7 +349,6 @@ func _ready() -> void:
 	%Resume.pressed.connect(_close_panel)
 	%ReturnToTitle.pressed.connect(_return_to_title)
 	%ReplayInstruction.pressed.connect(_review_instruction)
-	%TapeMessage.text = StoryText.FINAL_CARD
 	%AdvanceBackdrop.pressed.connect(_advance)
 	turn_page.pressed.connect(_advance)
 	action.pressed.connect(_advance.bind(true))
@@ -363,6 +369,7 @@ func _ready() -> void:
 	picture.set_shader_parameter("offering_paper", inventory.OFFERING_ICONS[&"paper"])
 	picture.set_shader_parameter("late_vessel", VESSEL)
 	picture.set_shader_parameter("watcher", WATCHER)
+	picture.set_shader_parameter("reveal_stare", REVEAL_STARE)
 	memory_percussion.stream = preload("res://assets/audio/yard-percussion.wav")
 	music.play()
 	_enter_screen(Screen.TITLE)
@@ -427,7 +434,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	get_viewport().set_input_as_handled()
 	if panel != Overlay.NONE:
 		_close_panel()
-	elif not blackout and screen not in [Screen.TITLE, Screen.INTRO, Screen.LISTEN, Screen.REVEAL, Screen.AFTERMATH, Screen.CREDITS]:
+	elif not blackout and screen not in [Screen.TITLE, Screen.INTRO, Screen.LISTEN, Screen.REVEAL, Screen.OUTRO_BLACK, Screen.CREDITS, Screen.END_CARD]:
 		_show_panel(Overlay.PAUSE, get_viewport().gui_get_focus_owner())
 
 
@@ -489,8 +496,9 @@ func _advance(perform_action := false) -> void:
 			_show_exploration()
 		if narration_index < lines.size() or screen in [Screen.YARD, Screen.HALL, Screen.GUEST_BEDROOM]:
 			return
-	if screen == Screen.MORNING:
-		_show_screen(Screen.SOFA_MEMORY)
+	if screen in [Screen.MORNING, Screen.SOFA_MEMORY, Screen.RITUAL_MEMORY]:
+		confession_resume_pending = true
+		_show_screen(Screen.TAPE)
 	elif screen == Screen.MEMORY:
 		_show_memory_gap()
 	elif screen == Screen.GUEST_BEDROOM:
@@ -499,12 +507,6 @@ func _advance(perform_action := false) -> void:
 		_show_screen(Screen.MORNING)
 	elif screen == Screen.BEDROOM_ECHO:
 		_show_screen(Screen.GUEST_BEDROOM)
-	elif screen == Screen.SOFA_MEMORY:
-		_show_screen(Screen.RITUAL_MEMORY)
-	elif screen == Screen.RITUAL_MEMORY:
-		confession_resume_pending = true
-		tape_line = StoryText.CONFESSION_MEMORY_BEAT
-		_show_screen(Screen.TAPE)
 	elif screen == Screen.DRIVE:
 		_continue_drive()
 	elif screen == Screen.VESSEL_OPEN:
@@ -517,11 +519,7 @@ func _advance(perform_action := false) -> void:
 	elif screen == Screen.BURNING:
 		stage = Stage.FINAL_TAPE
 		_show_screen(Screen.BURN_AREA)
-	elif screen == Screen.REVEAL and reveal_readable:
-		_show_screen(Screen.AFTERMATH)
-	elif screen == Screen.AFTERMATH:
-		_show_screen(Screen.CREDITS)
-	elif screen == Screen.CREDITS and perform_action and action.visible:
+	elif screen == Screen.END_CARD and perform_action and action.visible:
 		_return_to_title()
 
 
@@ -575,7 +573,7 @@ func _show_screen(next: Screen) -> void:
 		focus.release_focus()
 	var through_door: bool = next in DOORS.get(screen, []) or screen in DOORS.get(next, [])
 	var fade := create_tween()
-	if screen == Screen.INTRO:
+	if screen == Screen.INTRO or next == Screen.OUTRO_BLACK:
 		%SceneCurtain.color.a = 1.0
 	else:
 		if screen == Screen.HALL and next == Screen.KITCHEN and stage == Stage.TAKE_VESSEL and not passing_watcher_seen:
@@ -610,10 +608,11 @@ func _enter_screen(next: Screen) -> void:
 		_stop_scare()
 	memory_percussion.stop()
 	picture.set_shader_parameter("watcher_strength", 0.0)
+	picture.set_shader_parameter("reveal_grandpa", 0.0)
+	picture.set_shader_parameter("reveal_ah_ma", 0.0)
 	var previous := screen
 	if next == Screen.TITLE:
 		seen_arrivals.clear()
-		confession_memory_seen = false
 		confession_resume_pending = false
 		first_watcher_seen = false
 		passing_watcher_seen = false
@@ -638,8 +637,8 @@ func _enter_screen(next: Screen) -> void:
 	screen = next
 	if screen == Screen.HALL and stage == Stage.ARRIVAL:
 		stage = Stage.RESPECTS
-	reveal_readable = false
 	%CreditsRoll.visible = screen == Screen.CREDITS
+	%EndCard.visible = screen == Screen.END_CARD
 	if credits_roll and credits_roll.is_valid():
 		credits_roll.kill()
 	if screen == Screen.DRIVE:
@@ -692,8 +691,7 @@ func _enter_screen(next: Screen) -> void:
 	%ReadingShade.modulate.a = 0.43 if screen == Screen.REVEAL else 1.0
 	%TapePanel.visible = screen == Screen.TAPE
 	%TVSignal.visible = screen == Screen.TAPE
-	%TapeMessage.hide()
-	%Pause.visible = screen not in [Screen.LISTEN, Screen.REVEAL, Screen.AFTERMATH, Screen.CREDITS]
+	%Pause.visible = screen not in [Screen.LISTEN, Screen.REVEAL, Screen.OUTRO_BLACK, Screen.CREDITS, Screen.END_CARD]
 	if screen == Screen.TAPE:
 		%TapePicture.texture = TAPE_FRAME
 		_update_tape_controls()
@@ -735,40 +733,58 @@ func _finish_transition() -> void:
 		_play_scare(RITE_CHANT, -8.5, "Drum, gong and chanting in the yard")
 	elif screen == Screen.TAPE and confession_resume_pending:
 		confession_resume_pending = false
-		_next_tape_line()
+		_next_tape_line(true)
 	elif screen == Screen.LISTEN:
 		ritual_action = RitualAction.TURN_LEFT
 		_set_action_label("Look toward the doorway")
 		action.grab_focus()
 	elif screen == Screen.REVEAL:
+		_start_final_gaze()
+	elif screen == Screen.OUTRO_BLACK:
 		scare_sequence = create_tween()
-		scare_sequence.tween_interval(2.3)
-		scare_sequence.tween_callback(_play_scare.bind(GIGGLE, -15.0, "Children giggle around the room"))
-		scare_sequence.tween_interval(3.5)
-		scare_sequence.tween_callback(_finish_reveal)
+		scare_sequence.tween_interval(OUTRO_BLACK_HOLD)
+		scare_sequence.tween_callback(_show_screen.bind(Screen.CREDITS))
 	elif screen == Screen.CREDITS:
 		_start_credits()
+	elif screen == Screen.END_CARD:
+		_set_action_label("Return to title")
+		action.grab_focus()
 	_update_objective()
-	if not arriving and screen not in [Screen.INTRO, Screen.LISTEN, Screen.REVEAL, Screen.CREDITS]:
+	if not arriving and screen not in [Screen.INTRO, Screen.LISTEN, Screen.REVEAL, Screen.OUTRO_BLACK, Screen.CREDITS, Screen.END_CARD]:
 		var target := hotspots[0] if keyboard_navigation and not hotspots.is_empty() else _default_focus()
 		target.grab_focus()
 
 
+func _start_final_gaze() -> void:
+	var laugh_left := 0.0
+	if scare_sound.playing and scare_sound.stream == GRANDPA_LAUGH:
+		laugh_left = maxf(0.0, GRANDPA_LAUGH.get_length() - scare_sound.get_playback_position())
+	scare_sequence = create_tween()
+	scare_sequence.tween_interval(laugh_left + REVEAL_SILENCE)
+	scare_sequence.tween_method(func(weight: float):
+		picture.set_shader_parameter("reveal_grandpa", weight), 0.0, 1.0, 0.40)
+	scare_sequence.tween_interval(0.32)
+	scare_sequence.tween_method(func(weight: float):
+		picture.set_shader_parameter("reveal_ah_ma", weight), 0.0, 1.0, 0.58)
+	scare_sequence.tween_interval(0.72)
+	scare_sequence.tween_callback(_show_final_line)
+	scare_sequence.tween_interval(FINAL_LINE_HOLD)
+	scare_sequence.tween_callback(_show_screen.bind(Screen.OUTRO_BLACK))
+
+
+func _show_final_line() -> void:
+	_set_line(StoryText.FINAL_LINE)
+	_finish_text_reveal()
+
+
 func _start_credits() -> void:
 	var roll: Label = %CreditsRoll
-	roll.position.y = 735.0
-	credits_roll = create_tween()
+	roll.position.y = 630.0
+	roll.modulate.a = 0.0
+	credits_roll = create_tween().set_parallel()
 	credits_roll.tween_property(roll, "position:y", -roll.size.y, 22.0)
-	credits_roll.tween_callback(func():
-		_set_action_label("Return to title")
-		action.grab_focus())
-
-
-func _finish_reveal() -> void:
-	reveal_readable = true
-	_set_line(StoryText.FINAL_LINE)
-	_set_action_label("")
-	turn_page.grab_focus()
+	credits_roll.tween_property(roll, "modulate:a", 1.0, 1.25)
+	credits_roll.chain().tween_callback(_show_screen.bind(Screen.END_CARD))
 
 
 func _update_scene_audio(previous: Screen) -> void:
@@ -1370,7 +1386,7 @@ func _vessel_taken() -> bool:
 
 func _check_vessel_ready() -> void:
 	if stage == Stage.TAKE_VESSEL and vessel_opened and slips_read:
-		stage = Stage.CONFESSION_TAPE
+		stage = Stage.PREPARATION_TAPE
 
 
 func _take_finale_item(item: StringName, line: String) -> void:
@@ -1609,7 +1625,7 @@ func _open_tape(chapter: int) -> void:
 func _latest_tape_chapter() -> int:
 	if stage >= Stage.FINAL_TAPE:
 		return 6
-	if stage >= Stage.CONFESSION_TAPE:
+	if stage >= Stage.PREPARATION_TAPE:
 		return 5
 	if stage >= Stage.INVITATION_TAPE:
 		return 4
@@ -1645,24 +1661,19 @@ func _tape_lines() -> Array:
 	return TAPE_CHAPTERS[tape_chapter - 1]
 
 
-func _next_tape_line() -> void:
+func _next_tape_line(resuming := false) -> void:
 	var lines := _tape_lines()
-	if tape_chapter == 5 and stage == Stage.CONFESSION_TAPE and tape_line == StoryText.CONFESSION_MEMORY_BEAT and not confession_memory_seen:
-		confession_memory_seen = true
+	if not resuming and tape_chapter == 6 and stage == Stage.FINAL_TAPE and CONFESSION_FLASHBACKS.has(tape_line):
 		tape_sound.stop()
-		_show_screen(Screen.MEMORY)
+		_show_screen(CONFESSION_FLASHBACKS[tape_line])
 		return
 	tape_line = maxi(0, tape_line + 1)
 	if tape_line < lines.size():
 		var beat: Array = lines[tape_line]
 		var original: String = beat[0]
-		var last_card := tape_chapter == 6 and tape_line == lines.size() - 1
-		%TapeMessage.visible = last_card
-		if last_card:
-			%TapePicture.texture = FINAL_TAPE_CARD
+		if tape_chapter == 6 and tape_line >= 2:
+			%TapePicture.texture = TAPE_CRYING
 		elif tape_chapter == 1 and (tape_line == StoryText.TAPE_GLANCE_BEAT or tape_line == StoryText.TAPE_ONE.size()):
-			%TapePicture.texture = TAPE_GLANCE
-		elif tape_chapter == 5 and ((tape_line >= 4 and tape_line < 10) or original.is_empty()):
 			%TapePicture.texture = TAPE_GLANCE
 		else:
 			%TapePicture.texture = TAPE_FRAME
@@ -1678,17 +1689,15 @@ func _next_tape_line() -> void:
 			stage = Stage.PREPARE_OFFERINGS
 		elif tape_chapter == 4 and stage == Stage.INVITATION_TAPE:
 			stage = Stage.TAKE_VESSEL
-		elif tape_chapter == 5 and stage == Stage.CONFESSION_TAPE:
+		elif tape_chapter == 5 and stage == Stage.PREPARATION_TAPE:
 			stage = Stage.RETURN_TO_WELL
 		elif tape_chapter == 6 and stage == Stage.FINAL_TAPE:
 			stage = Stage.FINISHED
-			%TapeMessage.hide()
 			_set_line("")
 			_set_action_label("")
 			tape_sound.stop()
 			_show_screen(Screen.LISTEN)
 			return
-		%TapeMessage.hide()
 		_set_line("")
 		_set_action_label("")
 		tape_sound.stop()
@@ -1893,7 +1902,7 @@ func _close_panel() -> void:
 func _review_instruction() -> void:
 	panel = Overlay.INSTRUCTION
 	var chapter := _latest_tape_chapter()
-	if stage in [Stage.RETURN_TO_TAPE, Stage.OFFERINGS_TAPE, Stage.INVITATION_TAPE, Stage.CONFESSION_TAPE, Stage.FINAL_TAPE]:
+	if stage in [Stage.RETURN_TO_TAPE, Stage.OFFERINGS_TAPE, Stage.INVITATION_TAPE, Stage.PREPARATION_TAPE, Stage.FINAL_TAPE]:
 		chapter -= 1
 	options_title.text = "Ah Ma’s last instruction"
 	%InstructionCaption.text = StoryText.INSTRUCTIONS[chapter - 1]

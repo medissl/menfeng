@@ -98,7 +98,7 @@ const SOFA_MEMORY := [
 
 const FATHERS_NOTE := [
 	"‘The tape’s in the player. Ah Ma asked me to have you come today if you could.’",
-	"‘I watched enough to check it worked. The rest is for you. —Dad’",
+	"‘She was found in the well. I didn’t want to tell you while you were driving. —Dad’",
 	"That’s Dad in the photo. His brother’s next to him. Their sister’s still in her apron.",
 	"Grandpa got sick and died when Ah Ma was thirty. She raised all three on her own.",
 	"Dad says there was always something for him to eat when he got home.",
@@ -154,30 +154,16 @@ const TAPE_FOUR := [
 	["搬到屋後金爐旁邊。別在屋裡打開。", "Take it out to the burner. Don’t open it in the house."],
 ]
 const TAPE_FIVE := [
-	["我跟你爸說，叫你挑今天來。阿嬤知道你會幫我。", "I asked your dad to bring you here today. I knew you’d help me."],
-	["等一下。阿嬤要跟你說實話。", "Wait. I need to tell you the truth."],
-	["你小時候問我，半夜在跟誰說話。我騙你說我在拜拜。", "You asked who I was talking to that night. I said I was praying."],
-	["我四十六歲那年，去找了個師公。我求他把阿公叫回來。", "When I was forty-six I went to a medium. I begged him to bring Grandpa back."],
-	["師公說，阿修羅、地獄，你阿公都熬過去了。", "The master said Grandpa had already made it through the Asura realm and hell."],
-	["他本來要上天，再去投胎。是我硬把他叫了回來。", "He was meant to go on to heaven and be reborn. I made him come back."],
-	["他們教我開眼。後來只要我摺衣服，阿公就會坐在我旁邊。", "They taught me to see him. After that, Grandpa used to sit with me while I folded the washing."],
-	["可是他變成餓鬼了。我煮的飯，他一口也吃不了。", "But he’d come back a hungry ghost. He couldn’t eat a bite of my cooking."],
-	["你還記得我說要去醫院檢查嗎？", "Remember when I said I was going to the hospital for checkups?"],
-	["罐子裡是那些沒能出生的孩子。我是去帶他們回來。", "The jar has the babies who died before they were born. That’s what I went to the hospital for."],
-	["我每晚都燒。後來幾千個了，我就不敢數了。", "I burned them every night. I stopped counting after a few thousand."],
-	["火一熄，他就吃他們的魂。跑掉的還躲在屋裡。", "When the fire went out, he ate their souls. The ones that got away still hide in the house."],
-	["他一過來，走廊裡那些小孩就不敢出聲。", "Whenever he came close, the children in the hall went quiet."],
-	["有一次我聽到小孩在叫我。回頭一看，是你阿公。", "Once I heard a child call me. I turned around. It was Grandpa."],
-	["這三十多年，我以為火還壓得住他。現在我怕的那個，已經不像你阿公了。", "For thirty years I thought the fire would keep him down. What’s here now hardly acts like Grandpa."],
-	["昨晚我去關水，手一直去碰井邊。我知道總有一天會下去。", "Last night I went to turn off the tap. My hands kept reaching for the well. I know where I’ll end up."],
-	["我先叫你點香、倒茶。我怕你一聽完，就不肯留下。", "I asked you to light incense and pour tea first. I thought you’d leave if I told you."],
-	["", "She looked at the empty seat."],
-	["我沒別的辦法了。你去看一下井邊，然後去梳妝台找鐵盒。", "I don’t know what else to do. Look at the well, then take the tin from my dresser."],
-	["在祖先桌前，抹一點白粉在眉心。師公那時就是這樣教我的。", "At the ancestor altar, put a little white powder between your eyebrows. That’s how he taught me to see."],
-	["再把金紙跟罐子一起燒。等火熄了再進來。", "Burn the joss paper with the jar. Come in when the fire goes out."],
+	["你出去的時候，去浴室看一下井。站遠一點，別把頭探進去。", "Have a look at the well before you go back out. Stay back from the rim."],
+	["我梳妝台上有個小鐵盒。裡面還有一點白粉。", "There’s a little tin on my dresser. There should be some white powder left."],
+	["到祖先桌前，抹一點在眉心。阿嬤以前也是這樣做的。", "At the ancestor altar, put a bit between your eyebrows. It’s what I used to do."],
+	["把金紙跟罐子一起燒。火熄了就進來。", "Burn the joss paper with the jar. Come in when the fire’s out."],
+	["後面還有一段。你坐好再看。", "There’s a bit left on the tape. Sit down for that part."],
 ]
 
-const CONFESSION_MEMORY_BEAT := 2
+const CONFESSION_NIGHT_BEAT := 4
+const CONFESSION_DAY_BEAT := 6
+const CONFESSION_SOFA_BEAT := 9
 const RITUAL_MEMORY := [
 	"I slipped outside one afternoon. I could hear the drum from my room.",
 	["Ah Ma", "Please. I just want to talk to him.", "拜託。我只是想跟他講講話。"],
@@ -186,14 +172,30 @@ const RITUAL_MEMORY := [
 ]
 
 const TAPE_SIX := [
-	["你回來看到這裡，先坐好。", "If you’re back and you’re seeing this, just stay seated."],
-	["你爸不知道。他問過，我都跟他說沒事。", "Your dad used to ask if I was all right. I always said yes."],
-	["以前你怕了，就來找我。這次換我來找你。", "You used to come get me when you were scared. I’ll come to you this time."],
-	["阿嬤只想再見他一面。怎麼會變成這樣。", "I only wanted to see him again. It wasn’t supposed to turn out like this."],
+	["火熄了就坐好。阿嬤有話要跟你說。", "If the fire’s out, stay seated. I need to tell you something."],
+	["我本來錄到前面就不敢再錄了。歹勢。", "I almost stopped the tape there. I’m sorry."],
+	["", "She wiped at her eyes."],
+	["是我請你爸叫你今天回來的。我知道你會幫我。", "I asked Dad to have you come today. I knew you’d help me."],
+	["你小時候問我半夜在跟誰說話。我騙你說我在拜拜。", "You asked who I was talking to at night. I lied. I told you I was praying."],
+	["我四十六歲那年去找了個師公。我求他把阿公叫回來。", "When I was forty-six I went to a medium. I begged him to bring Grandpa back."],
+	["他們來家裡那天，我說一個晚上也好。我只是想跟他說說話。", "When they came to the house, I told them one night would do. I just wanted to talk to him."],
+	["師公說，阿修羅、地獄，你阿公都熬過去了。他可以去投胎了。", "They said your grandpa had made it through hell and the Asura realm. He was ready to be reborn."],
+	["是我硬要他回來。那些人教我怎麼看見他。", "I made them bring him back. They taught me how to see him."],
+	["後來只要我摺衣服，他都會坐在我旁邊。就那個位子。", "He used to sit next to me while I folded the washing. Right there."],
+	["可是他變成餓鬼了。我煮的飯，他一口也吃不了。", "He came back a hungry ghost. He couldn’t eat a bite of my cooking."],
+	["你還記得我說要去醫院檢查嗎？", "Remember when I said I was going to the hospital for checkups?"],
+	["罐子裡是那些沒能出生的孩子。我是去帶他們回來。", "The jar held the babies who died before they were born. That’s what I went to the hospital for."],
+	["我每晚都燒。後來幾千個了，我就不敢數了。", "I burned them every night. I stopped counting after a few thousand."],
+	["火一熄，他就吃他們的魂。跑掉的還躲在屋裡。", "When the fire went out, he ate their souls. The ones that got away still hide in the house."],
+	["有一次我聽到小孩在叫我。回頭一看，是你阿公。", "Once I heard a child call me. I turned around. It was Grandpa."],
+	["三十多年了，我以為還壓得住他。現在那個東西，我也不知道要怎麼叫他。", "For thirty years I thought I could hold him down. I don’t know what to call him anymore."],
+	["昨晚我去關水，手又去摸井邊。我知道總有一天會下去。", "Last night I went to turn off the tap. My hands went to the rim again. I know where I’ll end up."],
+	["我怕你一聽完就走了。所以我才先叫你點香、倒茶。", "I thought you’d leave if I told you. That’s why I started with the incense and tea."],
+	["你眉心那點白粉，就是他們當初幫我開眼用的。", "That powder between your eyebrows is what they used to open my third eye."],
+	["阿嬤只想再見他一面。怎麼會變成這樣。", "I only wanted to see him again. How did it get this bad?"],
 	["歹勢，我的乖孫。", "I’m sorry, sweetheart."],
 ]
 const TAPES := [TAPE_ONE, TAPE_TWO, TAPE_THREE, TAPE_FOUR, TAPE_FIVE, TAPE_SIX]
-const FINAL_CARD := "歹勢\n我的乖孫"
 const INSTRUCTIONS := [
 	"拿三支香，插在祖先照片前的香爐。\nLight three sticks of incense at the ancestor altar.",
 	"把阿公的照片擺在祖先桌的香爐旁邊。\nSet Grandpa’s portrait beside the ancestor incense burner.",
@@ -261,11 +263,7 @@ const RECEIPT_BACK := [
 	"I don’t remember calling her.",
 ]
 
-const AFTERMATH := [
-	"Dad said to call him in the morning. What am I supposed to tell him?",
-]
-
-const FINAL_LINE := "Ah Ma?"
+const FINAL_LINE := "You can see us."
 
 const OFFERING_ITEMS := {
 	&"cups": ["Three cups", "Three small cups. One has a chipped rim.", "I took all three."],
