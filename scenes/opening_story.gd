@@ -170,9 +170,10 @@ const TAPE_FIVE := [
 	["火熄了，他就吞那些孩子的魂。逃掉的，就躲在屋裡。", "Once the fire went out, he swallowed their souls. The ones who slipped past him hid in the house."],
 	["有時我聽到小孩跑過走廊。你阿公一靠近，聲音就停了。", "Sometimes I heard children running in the hall. Whenever your grandpa came close, it went quiet."],
 	["到後來，他一開口，有時候是小孩子的聲音。", "By the end, he sometimes spoke in a child’s voice."],
-	["最近，燒了也沒用。昨晚我站在浴室，手抓著井邊。", "Lately it hasn’t been enough. Last night I was in the bathroom with my hands on the well."],
-	["我叫自己的手放開。它們反而抓得更緊。", "I told my hands to let go. They held on tighter."],
+	["最近，燒了也沒用。昨晚我去浴室，想把水龍頭關緊。", "Lately it hasn’t been enough. Last night I went into the bathroom to turn the tap off."],
+	["我本來想轉身出去。手卻自己伸了出去。", "I meant to turn and leave. My hands reached out on their own."],
 	["我先叫你點香、倒茶。那些事你都熟。我怕一開始就講，你會直接走。", "I started with incense and tea because you knew how. I thought you’d leave if I told you everything at once."],
+	["", "She looked at the empty cushion. For a while she didn’t say anything."],
 	["到浴室去看看水井。你要是還願意留下，去我梳妝台拿那個小鐵盒。", "Look at the well. If you still want to stay, there’s a little tin on my dresser."],
 	["在祖先桌前，把裡面的白粉抹一點在眉心。就像那個人當初教我的。", "At the ancestor altar, put a little of the white powder between your eyebrows. That’s how the man taught me to see."],
 	["做完了，就把金紙放在罐子旁邊，一起燒掉。火熄了再進來。", "After that, put the paper beside the jar and burn them together. Come in once the fire goes out."],
@@ -216,6 +217,7 @@ const VESSEL_INSIDE := [
 	"I thought the smallest one was just a corner of the wrapping. When the cloth moved, I let the lid fall back.",
 	"From the kitchen I could see the television’s reflection in the hall window. The next part of the tape was still waiting.",
 ]
+const WELL_BEFORE_RECONSTRUCTION := "The tap was still dripping. A pale scrape ran across the rim where the rope touched it."
 const WELL_RECONSTRUCTION := [
 	"Dad said they’d found her here. I’d pictured her by the sink with the tap still running.",
 	"The rope rubbed a groove in the concrete. From this side, I could see where somebody had tried to hold on.",
@@ -235,6 +237,10 @@ const FIRE_BEATS := [
 	"The edge of the paper caught first. It lifted and curled over the rim of the vessel.",
 	"I watched until the paper stopped moving. Usually, when rain stopped out here, the insects started up again.",
 	"The fire sank below the opening. The kitchen, the eaves, and the trees beyond them had all gone quiet.",
+]
+const HALL_AFTER_BURN := [
+	"The incense was still burning. The cups were right where I’d left them.",
+	"I stood there long enough to think it had worked.",
 ]
 const SIT_DOWN := [
 	"I sat where her weight had pressed the cushion flat. The lace slipped down the back of the couch.",
