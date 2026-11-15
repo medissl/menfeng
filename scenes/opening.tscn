@@ -5,16 +5,106 @@
 [ext_resource type="AudioStream" path="res://assets/opening/room-tone.wav" id="3"]
 [ext_resource type="AudioStream" path="res://assets/opening/wood-settle.wav" id="4"]
 [ext_resource type="Shader" path="res://scenes/vhs_image.gdshader" id="5"]
+[ext_resource type="AudioStream" path="res://assets/audio/intro-glitch.wav" id="28"]
+[ext_resource type="AudioStream" path="res://assets/audio/phone-ring.wav" id="30"]
+[ext_resource type="Script" path="res://scenes/audio_settings.gd" id="31"]
+[ext_resource type="Texture2D" path="res://assets/ritual/grandpa-portrait.png" id="32"]
+[ext_resource type="FontFile" path="res://assets/fonts/NotoSerifTC-Prologue.woff2" id="29"]
 
-[sub_resource type="SystemFont" id="TitleFont"]
-font_names = PackedStringArray("PMingLiU", "Microsoft JhengHei", "Noto Serif CJK TC")
-font_weight = 600
+[ext_resource type="FontFile" path="res://assets/fonts/NotoSerifTC-Title.woff2" id="6"]
+[ext_resource type="FontFile" path="res://assets/fonts/CrimsonText-Regular.ttf" id="7"]
+[ext_resource type="AudioStream" path="res://assets/audio/piano.mp3" id="8"]
+[ext_resource type="AudioStream" path="res://assets/audio/drive.wav" id="9"]
+[ext_resource type="AudioStream" path="res://assets/audio/car-exit.wav" id="10"]
+[ext_resource type="AudioStream" path="res://assets/audio/wood-door.wav" id="11"]
+[ext_resource type="AudioStream" path="res://assets/audio/rain.wav" id="12"]
+[ext_resource type="AudioStream" path="res://assets/audio/muffled-chant.wav" id="13"]
+[ext_resource type="AudioStream" path="res://assets/audio/pickup.wav" id="14"]
+[ext_resource type="AudioStream" path="res://assets/audio/rural-night.wav" id="15"]
+[ext_resource type="AudioStream" path="res://assets/audio/water-drip.wav" id="16"]
+[ext_resource type="AudioStream" path="res://assets/audio/page-turn.wav" id="17"]
+[ext_resource type="AudioStream" path="res://assets/audio/concrete-steps.wav" id="18"]
+[ext_resource type="AudioStream" path="res://assets/audio/cough.wav" id="19"]
+[ext_resource type="Shader" path="res://scenes/menu_signal.gdshader" id="20"]
+[ext_resource type="Shader" path="res://scenes/narration_signal.gdshader" id="21"]
+[ext_resource type="AudioStream" path="res://assets/audio/match-strike.wav" id="22"]
+[ext_resource type="Shader" path="res://scenes/crt_playback.gdshader" id="23"]
+[ext_resource type="Script" path="res://scenes/inventory.gd" id="24"]
+[ext_resource type="Script" path="res://scenes/text_action.gd" id="25"]
+[ext_resource type="FontFile" path="res://assets/fonts/Cubic11.ttf" id="26"]
+[ext_resource type="Texture2D" path="res://assets/ritual/ancestor-incense.png" id="27"]
 
 [sub_resource type="ShaderMaterial" id="TapeImage"]
 shader = ExtResource("5")
+shader_parameter/ancestor_sticks = ExtResource("27")
+shader_parameter/ancestor_portrait = ExtResource("32")
 
-[sub_resource type="SystemFont" id="TextFont"]
-font_names = PackedStringArray("Georgia", "DejaVu Serif")
+[sub_resource type="ShaderMaterial" id="TapeProp"]
+shader = ExtResource("5")
+shader_parameter/transparent_prop = true
+
+[sub_resource type="ShaderMaterial" id="MenuSignal"]
+shader = ExtResource("20")
+
+[sub_resource type="ShaderMaterial" id="NarrationSignal"]
+shader = ExtResource("21")
+
+[sub_resource type="ShaderMaterial" id="TapePlayback"]
+shader = ExtResource("23")
+
+[sub_resource type="StyleBoxFlat" id="Inset"]
+bg_color = Color(0.042, 0.032, 0.027, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.29, 0.22, 0.17, 1)
+content_margin_left = 14.0
+content_margin_right = 14.0
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="Track"]
+bg_color = Color(0.53, 0.48, 0.41, 1)
+content_margin_top = 1.5
+content_margin_bottom = 1.5
+
+[sub_resource type="StyleBoxFlat" id="TrackFill"]
+bg_color = Color(0.58, 0.52, 0.43, 1)
+content_margin_top = 1.5
+content_margin_bottom = 1.5
+
+[sub_resource type="Gradient" id="SliderInk"]
+colors = PackedColorArray(0.84, 0.73, 0.60, 1, 0.84, 0.73, 0.60, 1)
+
+[sub_resource type="GradientTexture2D" id="SliderKnob"]
+gradient = SubResource("SliderInk")
+width = 11
+height = 15
+
+[sub_resource type="SystemFont" id="MenuMono"]
+font_names = PackedStringArray("Cascadia Mono", "Courier New", "monospace")
+
+[sub_resource type="Gradient" id="ReadingGradient"]
+offsets = PackedFloat32Array(0, 0.24, 0.58, 0.81, 1)
+colors = PackedColorArray(0.028, 0.021, 0.018, 0, 0.026, 0.019, 0.016, 0.08, 0.019, 0.013, 0.011, 0.54, 0.013, 0.01, 0.009, 0.82, 0.01, 0.008, 0.007, 0.94)
+
+[sub_resource type="GradientTexture2D" id="ReadingShade"]
+gradient = SubResource("ReadingGradient")
+width = 4
+height = 256
+fill_to = Vector2(0, 1)
+
+[sub_resource type="FontVariation" id="SoundCueItalic"]
+base_font = ExtResource("7")
+variation_transform = Transform2D(1, 0, -0.25, 1, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="HotspotLabelBackground"]
+bg_color = Color(0.034, 0.026, 0.022, 0.61)
+content_margin_left = 9.0
+content_margin_top = 4.0
+content_margin_right = 9.0
+content_margin_bottom = 4.0
 
 [sub_resource type="StyleBoxFlat" id="Normal"]
 bg_color = Color(0.09, 0.065, 0.05, 0.96)
@@ -56,14 +146,9 @@ border_color = Color(0.86, 0.56, 0.37, 1)
 
 [sub_resource type="StyleBoxEmpty" id="Empty"]
 
-[sub_resource type="StyleBoxFlat" id="GapHover"]
-draw_center = false
-border_width_bottom = 2
-border_color = Color(0.95, 0.46, 0.33, 0.8)
-
 [sub_resource type="Gradient" id="ShadeGradient"]
 offsets = PackedFloat32Array(0, 0.64, 1)
-colors = PackedColorArray(0.025, 0.017, 0.013, 0.98, 0.03, 0.019, 0.014, 0.62, 0.04, 0.02, 0.01, 0)
+colors = PackedColorArray(0.014, 0.01, 0.008, 0.88, 0.018, 0.013, 0.011, 0.55, 0.022, 0.016, 0.013, 0.26)
 
 [sub_resource type="GradientTexture2D" id="Shade"]
 gradient = SubResource("ShadeGradient")
@@ -73,15 +158,35 @@ fill_to = Vector2(0.62, 0)
 
 [sub_resource type="Theme" id="Theme"]
 default_font_size = 16
+default_font = SubResource("MenuMono")
 Button/colors/font_color = Color(0.94, 0.88, 0.77, 1)
 Button/colors/font_hover_color = Color(0.94, 0.88, 0.77, 1)
 Button/colors/font_focus_color = Color(0.94, 0.88, 0.77, 1)
 Button/colors/font_pressed_color = Color(0.94, 0.88, 0.77, 1)
+Button/colors/font_disabled_color = Color(0.46, 0.39, 0.33, 1)
 Button/styles/normal = SubResource("Normal")
 Button/styles/hover = SubResource("Hover")
 Button/styles/pressed = SubResource("Pressed")
 Button/styles/focus = SubResource("Focus")
-CheckButton/colors/font_color = Color(0.94, 0.88, 0.77, 1)
+Button/styles/disabled = SubResource("Inset")
+HSlider/icons/grabber = SubResource("SliderKnob")
+HSlider/icons/grabber_highlight = SubResource("SliderKnob")
+HSlider/styles/slider = SubResource("Track")
+HSlider/styles/grabber_area = SubResource("TrackFill")
+HSlider/styles/grabber_area_highlight = SubResource("TrackFill")
+HSlider/styles/focus = SubResource("Focus")
+TextAction/base_type = &"Button"
+TextAction/fonts/font = ExtResource("7")
+TextAction/colors/font_color = Color(0.80, 0.74, 0.65, 1)
+TextAction/colors/font_hover_color = Color(0.97, 0.92, 0.85, 1)
+TextAction/colors/font_focus_color = Color(0.80, 0.74, 0.65, 1)
+TextAction/colors/font_pressed_color = Color(0.97, 0.92, 0.85, 1)
+TextAction/colors/font_hover_pressed_color = Color(0.97, 0.92, 0.85, 1)
+TextAction/styles/normal = SubResource("Empty")
+TextAction/styles/hover = SubResource("Empty")
+TextAction/styles/pressed = SubResource("Empty")
+TextAction/styles/focus = SubResource("Empty")
+TextAction/styles/disabled = SubResource("Empty")
 
 [node name="Opening" type="Control"]
 anchors_preset = 15
@@ -89,6 +194,7 @@ anchor_right = 1
 anchor_bottom = 1
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme = SubResource("Theme")
 script = ExtResource("1")
 
@@ -100,7 +206,7 @@ anchor_bottom = 1
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.016, 0.01, 0.008, 1)
+color = Color(0, 0, 0, 1)
 
 [node name="Backdrop" type="TextureRect" parent="."]
 unique_name_in_owner = true
@@ -114,6 +220,30 @@ material = SubResource("TapeImage")
 texture = ExtResource("2")
 expand_mode = 1
 stretch_mode = 6
+
+[node name="SceneMatch" type="TextureRect" parent="."]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="InspectionProp" type="TextureRect" parent="."]
+unique_name_in_owner = true
+visible = false
+offset_left = 322
+offset_top = 69
+offset_right = 958
+offset_bottom = 526
+mouse_filter = 2
+material = SubResource("TapeProp")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="TitleShade" type="TextureRect" parent="."]
 unique_name_in_owner = true
@@ -135,70 +265,130 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="TitleRule" type="ColorRect" parent="OpeningTitle"]
-unique_name_in_owner = true
-offset_left = 66
-offset_top = 276
-offset_right = 103
-offset_bottom = 278
-mouse_filter = 2
-color = Color(0.92, 0.48, 0.36, 1)
-
 [node name="GameTitle" type="Label" parent="OpeningTitle"]
 unique_name_in_owner = true
-offset_left = 57
-offset_top = 130
-offset_right = 440
-offset_bottom = 271
+offset_left = 99
+offset_top = 184
+offset_right = 399
+offset_bottom = 314
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.94, 0.88, 0.77, 1)
-theme_override_font_sizes/font_size = 112
+theme_override_fonts/font = ExtResource("6")
+theme_override_font_sizes/font_size = 108
+theme_override_colors/font_color = Color(0.57, 0.18, 0.125, 1)
 text = "門縫"
-theme_override_fonts/font = SubResource("TitleFont")
-theme_override_colors/font_shadow_color = Color(0.08, 0.028, 0.018, 1)
-theme_override_constants/shadow_offset_x = 3
-theme_override_constants/shadow_offset_y = 3
+
 
 [node name="TitleEnglish" type="Label" parent="OpeningTitle"]
 unique_name_in_owner = true
-offset_left = 67
-offset_top = 289
-offset_right = 390
-offset_bottom = 323
+offset_left = 108
+offset_top = 323
+offset_right = 328
+offset_bottom = 363
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.75, 0.64, 0.52, 1)
-theme_override_font_sizes/font_size = 18
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
 text = "M E N F E N G"
+
 
 [node name="Begin" type="Button" parent="OpeningTitle"]
 unique_name_in_owner = true
-offset_left = 67
-offset_top = 367
-offset_right = 280
-offset_bottom = 416
+offset_left = 108
+offset_top = 393
+offset_right = 278
+offset_bottom = 443
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 26
 mouse_default_cursor_shape = 2
-text = "Begin"
 alignment = 0
+text = "Begin"
+script = ExtResource("25")
+
 
 [node name="TitleSettings" type="Button" parent="OpeningTitle"]
 unique_name_in_owner = true
-offset_left = 67
-offset_top = 427
-offset_right = 280
-offset_bottom = 474
+offset_left = 108
+offset_top = 443
+offset_right = 278
+offset_bottom = 493
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 26
 mouse_default_cursor_shape = 2
-text = "Settings"
 alignment = 0
+text = "Settings"
+script = ExtResource("25")
+
 
 [node name="Quit" type="Button" parent="OpeningTitle"]
 unique_name_in_owner = true
-offset_left = 67
-offset_top = 485
-offset_right = 280
-offset_bottom = 532
+offset_left = 108
+offset_top = 493
+offset_right = 278
+offset_bottom = 543
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 26
 mouse_default_cursor_shape = 2
-text = "Quit"
 alignment = 0
+text = "Quit"
+script = ExtResource("25")
+
+
+[node name="TVSignal" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="TapePicture" type="TextureRect" parent="TVSignal"]
+unique_name_in_owner = true
+offset_left = 394
+offset_top = 104
+offset_right = 815
+offset_bottom = 405
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 0
+material = SubResource("TapePlayback")
+
+[node name="TapeMessage" type="Label" parent="TVSignal"]
+unique_name_in_owner = true
+visible = false
+offset_left = 509.0
+offset_top = 279.0
+offset_right = 567.0
+offset_bottom = 314.0
+mouse_filter = 2
+material = SubResource("NarrationSignal")
+theme_override_fonts/font = ExtResource("26")
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.20, 0.095, 0.067, 1)
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TapeStatus" type="Label" parent="TVSignal"]
+unique_name_in_owner = true
+offset_left = 423
+offset_top = 129
+offset_right = 542
+offset_bottom = 153
+mouse_filter = 2
+material = SubResource("NarrationSignal")
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.78, 0.88, 0.75, 1)
+text = "STOP"
+
+[node name="TapeCounter" type="Label" parent="TVSignal"]
+unique_name_in_owner = true
+offset_left = 630
+offset_top = 129
+offset_right = 786
+offset_bottom = 153
+mouse_filter = 2
+material = SubResource("NarrationSignal")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.78, 0.88, 0.75, 1)
+horizontal_alignment = 2
 
 [node name="Story" type="Control" parent="."]
 unique_name_in_owner = true
@@ -210,78 +400,354 @@ grow_vertical = 2
 visible = false
 mouse_filter = 2
 
-[node name="Gap" type="Button" parent="Story"]
+[node name="AdvanceBackdrop" type="Button" parent="Story"]
 unique_name_in_owner = true
-offset_left = 484
-offset_top = 586
-offset_right = 797
-offset_bottom = 643
-mouse_default_cursor_shape = 2
-text = ""
-tooltip_text = "Look under the door"
+anchor_right = 1.0
+anchor_bottom = 1.0
 focus_mode = 0
+accessibility_hidden = true
 theme_override_styles/normal = SubResource("Empty")
-theme_override_styles/hover = SubResource("GapHover")
-theme_override_styles/pressed = SubResource("GapHover")
+theme_override_styles/hover = SubResource("Empty")
+theme_override_styles/pressed = SubResource("Empty")
 
 [node name="Pause" type="Button" parent="Story"]
 unique_name_in_owner = true
-offset_left = 1158
-offset_top = 26
-offset_right = 1254
-offset_bottom = 68
+offset_left = 1138
+offset_top = 21
+offset_right = 1240
+offset_bottom = 70
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 21
 mouse_default_cursor_shape = 2
-text = "Pause"
+alignment = 2
+text = "Menu"
+script = ExtResource("25")
 
-[node name="CaptionBand" type="ColorRect" parent="Story"]
+
+[node name="MenuRim" type="Line2D" parent="Story/Pause"]
+points = PackedVector2Array(1, 21, 22, 21)
+width = 1.25
+default_color = Color(0.84, 0.76, 0.64, 1)
+antialiased = true
+
+[node name="MenuShort" type="Line2D" parent="Story/Pause"]
+points = PackedVector2Array(1, 29, 17, 29)
+width = 1.25
+default_color = Color(0.84, 0.76, 0.64, 1)
+antialiased = true
+
+[node name="PortraitInscription" type="Label" parent="Story"]
 unique_name_in_owner = true
-offset_left = 0
-offset_top = 650
+visible = false
+offset_left = 568.0
+offset_top = 170.0
+offset_right = 712.0
+offset_bottom = 249.0
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("26")
+theme_override_colors/font_color = Color(0.18, 0.115, 0.077, 0.91)
+theme_override_font_sizes/font_size = 15
+text = "病了好幾個月。\n走得很平靜。"
+horizontal_alignment = 1
+vertical_alignment = 1
+language = "zh_TW"
+
+[node name="Hotspots" type="Control" parent="Story"]
+unique_name_in_owner = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="ReadingShade" type="TextureRect" parent="Story"]
+unique_name_in_owner = true
+offset_top = 465
 offset_right = 1280
 offset_bottom = 720
 mouse_filter = 2
-color = Color(0.036, 0.024, 0.018, 0.97)
+texture = SubResource("ReadingShade")
+expand_mode = 1
 
-[node name="BandRule" type="ColorRect" parent="Story"]
+[node name="Objective" type="Label" parent="Story"]
 unique_name_in_owner = true
-offset_left = 0
-offset_top = 650
-offset_right = 1280
-offset_bottom = 651
+offset_left = 195
+offset_top = 652
+offset_right = 1085
+offset_bottom = 698
 mouse_filter = 2
-color = Color(0.34, 0.19, 0.13, 1)
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="Location" type="Label" parent="Story"]
-unique_name_in_owner = true
-offset_left = 37
-offset_top = 657
-offset_right = 804
-offset_bottom = 678
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.92, 0.48, 0.36, 1)
-theme_override_font_sizes/font_size = 12
-text = "AH MA’S HOUSE"
 
-[node name="Caption" type="Label" parent="Story"]
+[node name="Carried" type="Label" parent="Story"]
 unique_name_in_owner = true
-offset_left = 37
-offset_top = 672
-offset_right = 901
-offset_bottom = 707
+offset_left = 96
+offset_top = 72
+offset_right = 546
+offset_bottom = 102
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.94, 0.88, 0.77, 1)
+theme_override_fonts/font = ExtResource("7")
 theme_override_font_sizes/font_size = 18
-text = "I used to wake up to that red light."
-theme_override_fonts/font = SubResource("TextFont")
+theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
+
+
+[node name="HeldDash" type="ColorRect" parent="Story"]
+unique_name_in_owner = true
+offset_left = 67
+offset_top = 87
+offset_right = 85
+offset_bottom = 89
+mouse_filter = 2
+color = Color(0.66, 0.24, 0.17, 1)
+
+[node name="InventoryButton" type="Button" parent="Story"]
+unique_name_in_owner = true
+offset_left = 66
+offset_top = 21
+offset_right = 186
+offset_bottom = 70
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 21
+mouse_default_cursor_shape = 2
+alignment = 2
+text = "Inventory"
+script = ExtResource("25")
+tooltip_text = "Inventory (I)"
+
+[node name="PocketRim" type="Line2D" parent="Story/InventoryButton"]
+points = PackedVector2Array(0, 22, 17, 22)
+width = 1.25
+default_color = Color(0.84, 0.76, 0.64, 1)
+antialiased = true
+
+[node name="Pocket" type="Line2D" parent="Story/InventoryButton"]
+points = PackedVector2Array(1, 22, 3, 31, 14, 31, 16, 22)
+width = 1.25
+default_color = Color(0.84, 0.76, 0.64, 1)
+antialiased = true
+
+[node name="Textbox" type="Control" parent="Story"]
+unique_name_in_owner = true
+offset_left = 64
+offset_top = 548
+offset_right = 1216
+offset_bottom = 688
+mouse_filter = 2
+
+[node name="SoundCue" type="Label" parent="Story"]
+unique_name_in_owner = true
+visible = false
+offset_left = 180
+offset_top = 556
+offset_right = 1100
+offset_bottom = 585
+mouse_filter = 2
+theme_override_fonts/font = SubResource("SoundCueItalic")
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.83, 0.8, 0.76, 1)
+theme_override_colors/font_shadow_color = Color(0.01, 0.008, 0.007, 0.96)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Speaker" type="Label" parent="Story/Textbox"]
+unique_name_in_owner = true
+visible = false
+offset_left = 116
+offset_top = 12
+offset_right = 1036
+offset_bottom = 34
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 19
+theme_override_colors/font_color = Color(0.87, 0.73, 0.59, 1)
+horizontal_alignment = 1
+
+[node name="Caption" type="Label" parent="Story/Textbox"]
+unique_name_in_owner = true
+offset_left = 116
+offset_top = 39
+offset_right = 1036
+offset_bottom = 99
+mouse_filter = 2
+material = SubResource("NarrationSignal")
+theme_override_colors/font_color = Color(0.95, 0.92, 0.86, 1)
+theme_override_font_sizes/font_size = 33
+theme_override_fonts/font = ExtResource("7")
+theme_override_constants/line_spacing = -3
+horizontal_alignment = 1
+autowrap_mode = 3
+visible_characters_behavior = 2
+theme_override_colors/font_shadow_color = Color(0.01, 0.008, 0.007, 0.9)
+theme_override_constants/shadow_offset_y = 2
+
+[node name="OriginalCaption" type="Label" parent="Story/Textbox"]
+unique_name_in_owner = true
+visible = false
+anchor_right = 1.0
+offset_left = 28.0
+offset_top = 39.0
+offset_right = -28.0
+offset_bottom = 69.0
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("26")
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.94, 0.88, 0.78, 1)
+theme_override_colors/font_shadow_color = Color(0.01, 0.008, 0.007, 0.95)
+theme_override_constants/shadow_offset_y = 2
+horizontal_alignment = 1
+visible_characters_behavior = 2
+language = "zh_TW"
+
+[node name="TurnPage" type="Button" parent="Story/Textbox"]
+unique_name_in_owner = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_default_cursor_shape = 2
+accessibility_name = "Continue reading"
+theme_override_styles/normal = SubResource("Empty")
+theme_override_styles/hover = SubResource("Empty")
+theme_override_styles/pressed = SubResource("Empty")
+theme_override_styles/focus = SubResource("Empty")
+
+[node name="ContinueHint" type="Label" parent="Story/Textbox/TurnPage"]
+unique_name_in_owner = true
+offset_left = 470.5
+offset_top = 115.0
+offset_right = 681.5
+offset_bottom = 141.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.64, 0.62, 0.6, 1)
+text = "Continue  ⌄"
+horizontal_alignment = 1
+
+[node name="TapePanel" type="Control" parent="Story"]
+unique_name_in_owner = true
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="TapeDeck" type="Button" parent="Story/TapePanel"]
+unique_name_in_owner = true
+offset_left = 737
+offset_top = 489
+offset_right = 876
+offset_bottom = 535
+mouse_default_cursor_shape = 2
+accessibility_name = "Play tape"
+theme_type_variation = &"TextAction"
+
+[node name="DeckLabel" type="Label" parent="Story/TapePanel"]
+unique_name_in_owner = true
+offset_left = 900
+offset_top = 485
+offset_right = 1160
+offset_bottom = 523
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 19
+theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
+visible = false
+vertical_alignment = 1
+
+[node name="DeckUnderline" type="ColorRect" parent="Story/TapePanel/DeckLabel"]
+offset_top = 33.0
+offset_right = 25.0
+offset_bottom = 35.0
+mouse_filter = 2
+color = Color(0.79, 0.71, 0.6, 0.9)
+
+[node name="TapeEarlier" type="Button" parent="Story/TapePanel"]
+unique_name_in_owner = true
+offset_left = 88
+offset_top = 645
+offset_right = 226
+offset_bottom = 690
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 19
+mouse_default_cursor_shape = 2
+alignment = 0
+text = "Earlier chapter"
+script = ExtResource("25")
+
+
+[node name="TapeLater" type="Button" parent="Story/TapePanel"]
+unique_name_in_owner = true
+offset_left = 236
+offset_top = 645
+offset_right = 395
+offset_bottom = 690
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 19
+mouse_default_cursor_shape = 2
+alignment = 0
+text = "Chapter 2 ›"
+script = ExtResource("25")
+
+[node name="TapeBack" type="Button" parent="Story/TapePanel"]
+unique_name_in_owner = true
+offset_left = 1052
+offset_top = 645
+offset_right = 1234
+offset_bottom = 690
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 20
+mouse_default_cursor_shape = 2
+alignment = 2
+text = "‹ Stand up"
+script = ExtResource("25")
+
 
 [node name="Action" type="Button" parent="Story"]
 unique_name_in_owner = true
-offset_left = 950
-offset_top = 663
-offset_right = 1244
-offset_bottom = 707
+offset_left = 78
+offset_top = 654
+offset_right = 314
+offset_bottom = 698
 mouse_default_cursor_shape = 2
-text = "Look under the door"
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.86, 0.81, 0.74, 1)
+theme_override_colors/font_hover_color = Color(1, 0.98, 0.93, 1)
+theme_override_colors/font_focus_color = Color(1, 0.98, 0.93, 1)
+theme_override_styles/normal = SubResource("Empty")
+theme_override_styles/hover = SubResource("Empty")
+theme_override_styles/pressed = SubResource("Empty")
+theme_override_styles/focus = SubResource("Empty")
+
+[node name="ActionMarker" type="ColorRect" parent="Story"]
+modulate = Color(1, 1, 1, 0)
+unique_name_in_owner = true
+offset_left = 90
+offset_top = 692
+offset_right = 239
+offset_bottom = 693
+mouse_filter = 2
+color = Color(0.93, 0.11, 0.085, 1)
+
+[node name="HotspotLabel" type="Label" parent="Story"]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+mouse_filter = 2
+accessibility_hidden = true
+theme_override_colors/font_color = Color(0.87, 0.82, 0.75, 1)
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 19
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.95)
+theme_override_constants/shadow_offset_y = 2
+theme_override_styles/normal = SubResource("HotspotLabelBackground")
+
+[node name="PlaceUnderline" type="ColorRect" parent="Story/HotspotLabel"]
+unique_name_in_owner = true
+visible = false
+offset_bottom = 2.0
+mouse_filter = 2
+color = Color(0.67, 0.23, 0.18, 1)
 
 [node name="Options" type="ColorRect" parent="."]
 unique_name_in_owner = true
@@ -291,94 +757,472 @@ anchor_bottom = 1
 grow_horizontal = 2
 grow_vertical = 2
 visible = false
-color = Color(0.019, 0.012, 0.01, 0.87)
+color = Color(0.013, 0.01, 0.008, 0.56)
 
-[node name="PanelBackground" type="ColorRect" parent="Options"]
-unique_name_in_owner = true
-offset_left = 407
-offset_top = 207
-offset_right = 873
-offset_bottom = 505
+[node name="OptionsFade" type="TextureRect" parent="Options"]
+offset_left = 0
+offset_top = 0
+offset_right = 1280
+offset_bottom = 720
 mouse_filter = 2
-color = Color(0.082, 0.055, 0.043, 1)
-
-[node name="PanelAccent" type="ColorRect" parent="Options"]
-unique_name_in_owner = true
-offset_left = 407
-offset_top = 207
-offset_right = 873
-offset_bottom = 209
-mouse_filter = 2
-color = Color(0.92, 0.48, 0.36, 1)
+texture = SubResource("Shade")
+expand_mode = 1
 
 [node name="OptionsTitle" type="Label" parent="Options"]
 unique_name_in_owner = true
-offset_left = 439
-offset_top = 225
-offset_right = 841
-offset_bottom = 282
+offset_left = 91
+offset_top = 132
+offset_right = 481
+offset_bottom = 196
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.94, 0.88, 0.77, 1)
-theme_override_font_sizes/font_size = 35
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 44
+theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
 text = "Paused"
-theme_override_fonts/font = SubResource("TextFont")
 
-[node name="VolumeLabel" type="Label" parent="Options"]
-unique_name_in_owner = true
-offset_left = 439
-offset_top = 292
-offset_right = 550
-offset_bottom = 331
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.94, 0.88, 0.77, 1)
-theme_override_font_sizes/font_size = 16
-text = "Volume"
-
-[node name="Volume" type="HSlider" parent="Options"]
-unique_name_in_owner = true
-offset_left = 564
-offset_top = 291
-offset_right = 842
-offset_bottom = 333
-mouse_default_cursor_shape = 2
-max_value = 100
-step = 1
-value = 80
-tooltip_text = "Master volume"
-
-[node name="ReducedMotion" type="CheckButton" parent="Options"]
-unique_name_in_owner = true
-offset_left = 432
-offset_top = 342
-offset_right = 847
-offset_bottom = 386
-mouse_default_cursor_shape = 2
-text = "Reduce motion"
 
 [node name="Resume" type="Button" parent="Options"]
 unique_name_in_owner = true
-offset_left = 439
-offset_top = 420
-offset_right = 603
-offset_bottom = 467
+offset_left = 92
+offset_top = 205
+offset_right = 285
+offset_bottom = 250
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 25
 mouse_default_cursor_shape = 2
+alignment = 0
 text = "Resume"
+script = ExtResource("25")
+
+
+[node name="VolumeControls" type="GridContainer" parent="Options"]
+unique_name_in_owner = true
+offset_left = 92.0
+offset_top = 275.0
+offset_right = 520.0
+offset_bottom = 435.0
+mouse_filter = 2
+theme_override_constants/h_separation = 13
+theme_override_constants/v_separation = 5
+columns = 3
+script = ExtResource("31")
+
+[node name="MasterLabel" type="Label" parent="Options/VolumeControls"]
+custom_minimum_size = Vector2(177, 46)
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 23
+theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
+text = "Master volume"
+vertical_alignment = 1
+
+[node name="Master" type="HSlider" parent="Options/VolumeControls"]
+custom_minimum_size = Vector2(136, 46)
+mouse_default_cursor_shape = 2
+accessibility_name = "Master volume"
+max_value = 100
+step = 1
+value = 80
+
+[node name="MasterReadout" type="Label" parent="Options/VolumeControls"]
+custom_minimum_size = Vector2(57, 46)
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 21
+theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
+text = "80%"
+vertical_alignment = 1
+
+[node name="MusicLabel" type="Label" parent="Options/VolumeControls"]
+custom_minimum_size = Vector2(177, 46)
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 23
+theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
+text = "Music volume"
+vertical_alignment = 1
+
+[node name="Music" type="HSlider" parent="Options/VolumeControls"]
+custom_minimum_size = Vector2(136, 46)
+mouse_default_cursor_shape = 2
+accessibility_name = "Music volume"
+max_value = 100
+step = 1
+value = 100
+
+[node name="MusicReadout" type="Label" parent="Options/VolumeControls"]
+custom_minimum_size = Vector2(57, 46)
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 21
+theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
+text = "100%"
+vertical_alignment = 1
+
+[node name="SFXLabel" type="Label" parent="Options/VolumeControls"]
+custom_minimum_size = Vector2(177, 46)
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 23
+theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
+text = "SFX volume"
+vertical_alignment = 1
+
+[node name="SFX" type="HSlider" parent="Options/VolumeControls"]
+custom_minimum_size = Vector2(136, 46)
+mouse_default_cursor_shape = 2
+accessibility_name = "SFX volume"
+max_value = 100
+step = 1
+value = 100
+
+[node name="SFXReadout" type="Label" parent="Options/VolumeControls"]
+custom_minimum_size = Vector2(57, 46)
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 21
+theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
+text = "100%"
+vertical_alignment = 1
 
 [node name="ReturnToTitle" type="Button" parent="Options"]
 unique_name_in_owner = true
-offset_left = 617
-offset_top = 420
-offset_right = 842
-offset_bottom = 467
+offset_left = 92
+offset_top = 436
+offset_right = 332
+offset_bottom = 484
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 24
 mouse_default_cursor_shape = 2
+alignment = 0
 text = "Return to title"
+script = ExtResource("25")
+
+
+[node name="ReplayInstruction" type="Button" parent="Options"]
+unique_name_in_owner = true
+visible = false
+offset_left = 92.0
+offset_top = 484.0
+offset_right = 358.0
+offset_bottom = 532.0
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 24
+mouse_default_cursor_shape = 2
+alignment = 0
+text = "Replay last instruction"
+script = ExtResource("25")
+
+[node name="InstructionCaption" type="Label" parent="Options"]
+unique_name_in_owner = true
+visible = false
+offset_left = 92.0
+offset_top = 223.0
+offset_right = 700.0
+offset_bottom = 409.0
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("26")
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
+theme_override_constants/line_spacing = 8
+autowrap_mode = 3
+
+[node name="Inventory" type="ColorRect" parent="."]
+unique_name_in_owner = true
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.019, 0.013, 0.011, 0.68)
+script = ExtResource("24")
+
+[node name="Contents" type="Control" parent="Inventory"]
+offset_left = 176
+offset_top = 88
+offset_right = 1114
+offset_bottom = 605
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="Inventory/Contents"]
+unique_name_in_owner = true
+offset_left = 0
+offset_top = 0
+offset_right = 490
+offset_bottom = 58
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 44
+theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
+text = "Inventory"
+
+
+[node name="ItemImage" type="TextureRect" parent="Inventory/Contents"]
+offset_left = 85
+offset_top = 65
+offset_right = 522
+offset_bottom = 337
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+material = SubResource("TapeProp")
+
+[node name="ItemName" type="Label" parent="Inventory/Contents"]
+unique_name_in_owner = true
+offset_left = 0
+offset_top = 338
+offset_right = 510
+offset_bottom = 386
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 34
+theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
+
+
+[node name="ItemDescription" type="Label" parent="Inventory/Contents"]
+unique_name_in_owner = true
+offset_left = 0
+offset_top = 388
+offset_right = 540
+offset_bottom = 444
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 23
+theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
+autowrap_mode = 3
+
+[node name="Hold" type="Button" parent="Inventory/Contents"]
+unique_name_in_owner = true
+offset_left = 0
+offset_top = 454
+offset_right = 210
+offset_bottom = 501
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 24
+mouse_default_cursor_shape = 2
+alignment = 0
+text = "Hold item ›"
+script = ExtResource("25")
+
+
+[node name="Slots" type="VBoxContainer" parent="Inventory/Contents"]
+offset_left = 624
+offset_top = 98
+offset_right = 941
+offset_bottom = 356
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Slot1" type="Button" parent="Inventory/Contents/Slots"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 23
+alignment = 0
+mouse_default_cursor_shape = 2
+script = ExtResource("25")
+
+[node name="Slot2" type="Button" parent="Inventory/Contents/Slots"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 23
+alignment = 0
+mouse_default_cursor_shape = 2
+script = ExtResource("25")
+
+[node name="Slot3" type="Button" parent="Inventory/Contents/Slots"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 23
+alignment = 0
+mouse_default_cursor_shape = 2
+script = ExtResource("25")
+
+[node name="Slot4" type="Button" parent="Inventory/Contents/Slots"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 23
+alignment = 0
+mouse_default_cursor_shape = 2
+script = ExtResource("25")
+
+[node name="Slot5" type="Button" parent="Inventory/Contents/Slots"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 23
+alignment = 0
+mouse_default_cursor_shape = 2
+script = ExtResource("25")
+
+[node name="SelectionDash" type="ColorRect" parent="Inventory/Contents"]
+offset_left = 591
+offset_top = 119
+offset_right = 615
+offset_bottom = 121
+mouse_filter = 2
+color = Color(0.75, 0.27, 0.19, 1)
+
+[node name="Close" type="Button" parent="Inventory/Contents"]
+unique_name_in_owner = true
+offset_left = 774
+offset_top = 454
+offset_right = 934
+offset_bottom = 501
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 24
+mouse_default_cursor_shape = 2
+alignment = 2
+text = "‹ Back"
+script = ExtResource("25")
+
+
+[node name="MenuSignal" type="ColorRect" parent="."]
+unique_name_in_owner = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+material = SubResource("MenuSignal")
+
+[node name="Intro" type="ColorRect" parent="."]
+unique_name_in_owner = true
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+focus_mode = 1
+color = Color(0, 0, 0, 1)
+
+[node name="IntroChinese" type="Label" parent="Intro"]
+unique_name_in_owner = true
+offset_left = 96
+offset_top = 294
+offset_right = 1184
+offset_bottom = 360
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("29")
+theme_override_font_sizes/font_size = 46
+horizontal_alignment = 1
+
+[node name="IntroEnglish" type="Label" parent="Intro"]
+unique_name_in_owner = true
+offset_left = 110
+offset_top = 373
+offset_right = 1170
+offset_bottom = 455
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 31
+horizontal_alignment = 1
+
+[node name="SceneCurtain" type="ColorRect" parent="."]
+unique_name_in_owner = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+
+[node name="PhoneRing" type="AudioStreamPlayer" parent="."]
+bus = &"SFX"
+unique_name_in_owner = true
+stream = ExtResource("30")
+volume_db = -13.0
+
+[node name="IntroGlitch" type="AudioStreamPlayer" parent="."]
+bus = &"SFX"
+unique_name_in_owner = true
+stream = ExtResource("28")
+volume_db = -13.0
 
 [node name="RoomTone" type="AudioStreamPlayer" parent="."]
+bus = &"SFX"
 unique_name_in_owner = true
 stream = ExtResource("3")
 volume_db = -20
 
 [node name="Settle" type="AudioStreamPlayer" parent="."]
+bus = &"SFX"
 unique_name_in_owner = true
 stream = ExtResource("4")
 volume_db = -12
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+bus = &"Music"
+unique_name_in_owner = true
+stream = ExtResource("8")
+volume_db = -16.0
+
+[node name="Engine" type="AudioStreamPlayer" parent="."]
+bus = &"SFX"
+unique_name_in_owner = true
+stream = ExtResource("9")
+
+[node name="CarExit" type="AudioStreamPlayer" parent="."]
+bus = &"SFX"
+unique_name_in_owner = true
+stream = ExtResource("10")
+
+[node name="WoodDoor" type="AudioStreamPlayer" parent="."]
+bus = &"SFX"
+unique_name_in_owner = true
+stream = ExtResource("11")
+
+[node name="Rain" type="AudioStreamPlayer" parent="."]
+bus = &"SFX"
+unique_name_in_owner = true
+stream = ExtResource("12")
+volume_db = -3.0
+
+[node name="Chant" type="AudioStreamPlayer" parent="."]
+bus = &"SFX"
+unique_name_in_owner = true
+stream = ExtResource("13")
+
+[node name="Pickup" type="AudioStreamPlayer" parent="."]
+bus = &"SFX"
+unique_name_in_owner = true
+stream = ExtResource("14")
+
+[node name="RuralNight" type="AudioStreamPlayer" parent="."]
+bus = &"SFX"
+unique_name_in_owner = true
+stream = ExtResource("15")
+
+[node name="WaterDrip" type="AudioStreamPlayer" parent="."]
+bus = &"SFX"
+unique_name_in_owner = true
+stream = ExtResource("16")
+
+[node name="PageTurn" type="AudioStreamPlayer" parent="."]
+bus = &"SFX"
+unique_name_in_owner = true
+stream = ExtResource("17")
+
+[node name="ConcreteSteps" type="AudioStreamPlayer" parent="."]
+bus = &"SFX"
+unique_name_in_owner = true
+stream = ExtResource("18")
+
+[node name="Cough" type="AudioStreamPlayer" parent="."]
+bus = &"SFX"
+unique_name_in_owner = true
+stream = ExtResource("19")
+
+[node name="TapeSound" type="AudioStreamPlayer" parent="."]
+bus = &"SFX"
+unique_name_in_owner = true
+volume_db = -4.0
+
+[node name="PourSound" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+volume_db = -9.0
+bus = &"SFX"
+
+[node name="ScareSound" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+bus = &"SFX"
+
+[node name="MatchStrike" type="AudioStreamPlayer" parent="."]
+bus = &"SFX"
+unique_name_in_owner = true
+stream = ExtResource("22")
