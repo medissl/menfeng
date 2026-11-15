@@ -230,7 +230,6 @@ const WARNING := "前人種禍，後人遭殃。"
 const INTRO_FIRST_CARD_SECONDS := 8.0
 const INTRO_RED_HOLD_SECONDS := 5.0
 const INTRO_FADE_SECONDS := 0.75
-const TEXT_CHARACTERS_PER_SECOND := 90.0
 
 const INSPECTION_IMAGES := {
 	"Ti Kong incense burner": preload("res://assets/inspection/ti-kong-burner.png"),
@@ -258,6 +257,7 @@ const INSPECTION_IMAGES := {
 @onready var action: Button = %Action
 @onready var options: Control = %Options
 @onready var options_title: Label = %OptionsTitle
+@onready var game_settings = %VolumeControls
 @onready var inventory = %Inventory
 @onready var room_tone: AudioStreamPlayer = %RoomTone
 @onready var settle: AudioStreamPlayer = %Settle
@@ -966,10 +966,10 @@ func _set_line(line: String, said_by: String = "", sound: String = "", original:
 	textbox.visible = not line.is_empty()
 	%ReadingShade.visible = textbox.visible or %SoundCue.visible
 	_finish_text_reveal()
-	if textbox.visible:
+	var duration: float = game_settings.reveal_duration(line.length())
+	if textbox.visible and duration > 0.0:
 		caption.visible_ratio = 0.0
 		text_reveal = create_tween()
-		var duration := minf(line.length() / TEXT_CHARACTERS_PER_SECOND, 1.0)
 		text_reveal.tween_property(caption, "visible_ratio", 1.0, duration)
 		if original_caption.visible:
 			original_caption.visible_ratio = 0.0
@@ -1929,8 +1929,7 @@ func _show_panel(next: Overlay, opener: Control) -> void:
 		return
 	options_title.text = "Settings" if panel == Overlay.SETTINGS else "Paused"
 	%Resume.text = "‹ Back" if panel == Overlay.SETTINGS else "Resume"
-	%Resume.position.y = 422.0 if panel == Overlay.SETTINGS else 205.0
-	%VolumeControls.position.y = 238.0 if panel == Overlay.SETTINGS else 275.0
+	%Resume.position.y = 486.0
 	%ReturnToTitle.visible = panel == Overlay.PAUSE
 	%ReplayInstruction.visible = panel == Overlay.PAUSE and stage >= Stage.TAKE_INCENSE
 	%InstructionCaption.hide()

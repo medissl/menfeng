@@ -774,9 +774,9 @@ expand_mode = 1
 [node name="OptionsTitle" type="Label" parent="Options"]
 unique_name_in_owner = true
 offset_left = 91
-offset_top = 132
+offset_top = 111
 offset_right = 481
-offset_bottom = 196
+offset_bottom = 175
 mouse_filter = 2
 theme_override_fonts/font = ExtResource("7")
 theme_override_font_sizes/font_size = 44
@@ -801,9 +801,9 @@ script = ExtResource("25")
 [node name="VolumeControls" type="GridContainer" parent="Options"]
 unique_name_in_owner = true
 offset_left = 92.0
-offset_top = 275.0
+offset_top = 190.0
 offset_right = 520.0
-offset_bottom = 435.0
+offset_bottom = 465.0
 mouse_filter = 2
 theme_override_constants/h_separation = 13
 theme_override_constants/v_separation = 5
@@ -888,12 +888,76 @@ theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
 text = "100%"
 vertical_alignment = 1
 
+
+[node name="DisplayModeLabel" type="Label" parent="Options/VolumeControls"]
+custom_minimum_size = Vector2(177, 38)
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 23
+theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
+text = "Display mode"
+vertical_alignment = 1
+
+[node name="DisplayMode" type="Button" parent="Options/VolumeControls"]
+custom_minimum_size = Vector2(136, 38)
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 22
+mouse_default_cursor_shape = 2
+alignment = 0
+text = "Windowed  ›"
+script = ExtResource("25")
+
+[node name="DisplayModeSpacer" type="Control" parent="Options/VolumeControls"]
+mouse_filter = 2
+
+[node name="VSyncLabel" type="Label" parent="Options/VolumeControls"]
+custom_minimum_size = Vector2(177, 38)
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 23
+theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
+text = "V-Sync"
+vertical_alignment = 1
+
+[node name="VSync" type="Button" parent="Options/VolumeControls"]
+custom_minimum_size = Vector2(136, 38)
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 22
+mouse_default_cursor_shape = 2
+alignment = 0
+text = "On  ›"
+script = ExtResource("25")
+
+[node name="VSyncSpacer" type="Control" parent="Options/VolumeControls"]
+mouse_filter = 2
+
+[node name="TextSpeedLabel" type="Label" parent="Options/VolumeControls"]
+custom_minimum_size = Vector2(177, 38)
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 23
+theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
+text = "Text speed"
+vertical_alignment = 1
+
+[node name="TextSpeed" type="Button" parent="Options/VolumeControls"]
+custom_minimum_size = Vector2(136, 38)
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 22
+mouse_default_cursor_shape = 2
+alignment = 0
+text = "Normal  ›"
+script = ExtResource("25")
+
+[node name="TextSpeedSpacer" type="Control" parent="Options/VolumeControls"]
+mouse_filter = 2
+
 [node name="ReturnToTitle" type="Button" parent="Options"]
 unique_name_in_owner = true
 offset_left = 92
-offset_top = 436
+offset_top = 537
 offset_right = 332
-offset_bottom = 484
+offset_bottom = 585
 theme_type_variation = &"TextAction"
 theme_override_font_sizes/font_size = 24
 mouse_default_cursor_shape = 2
@@ -906,9 +970,9 @@ script = ExtResource("25")
 unique_name_in_owner = true
 visible = false
 offset_left = 92.0
-offset_top = 484.0
+offset_top = 585.0
 offset_right = 358.0
-offset_bottom = 532.0
+offset_bottom = 633.0
 theme_type_variation = &"TextAction"
 theme_override_font_sizes/font_size = 24
 mouse_default_cursor_shape = 2
