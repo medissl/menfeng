@@ -28,12 +28,17 @@ uniform bool kitchen = false;
 // x: cups, y: tea, z: wine, w: paper.
 uniform vec4 kitchen_items = vec4(0.0);
 uniform bool family_cups = false;
-uniform bool family_tea = false;
+uniform bool family_tea_left = false;
+uniform bool family_tea_right = false;
 uniform bool family_wine = false;
 uniform sampler2D late_vessel : source_color, filter_linear;
 uniform int vessel_location = 0;
 uniform bool burner_paper = false;
-uniform float view_level = 1.0;
+uniform float house_dread = 0.0;
+uniform bool reveal_glitch = false;
+uniform sampler2D watcher : source_color, filter_linear;
+uniform vec4 watcher_area = vec4(0.0, 0.0, 1.0, 1.0);
+uniform float watcher_strength = 0.0;
 
 vec3 add_vessel(vec3 room, vec2 uv) {
 	vec2 origin = vessel_location == 1 ? vec2(0.569, 0.314) : vec2(0.231, 0.662);
@@ -73,12 +78,15 @@ vec3 place_kitchen_prop(vec3 room, vec2 uv, vec2 origin, vec2 size, vec3 light, 
 	return room;
 }
 
-vec3 place_cup(vec3 room, vec2 uv, vec2 origin, vec2 size, vec3 light, vec3 drink, bool filled) {
+vec3 place_cup(vec3 room, vec2 uv, vec2 origin, vec2 size, vec3 light, vec3 drink, bool filled, bool chipped) {
 	vec2 local = (uv - origin) / size;
 	vec2 base = (local - vec2(0.50, 0.96)) / vec2(0.50, 0.13);
 	room *= 1.0 - 0.40 * (1.0 - smoothstep(0.1, 1.0, length(base)));
 	if (all(greaterThanEqual(local, vec2(0.0))) && all(lessThanEqual(local, vec2(1.0)))) {
 		vec4 cup = texture(offering_cup, local);
+		if (chipped) {
+			cup.a *= smoothstep(0.037, 0.065, length(local - vec2(0.65, 0.095)));
+		}
 		if (filled) {
 			vec2 surface = (local - vec2(0.50, 0.167)) / vec2(0.36, 0.085);
 			float fill = 1.0 - smoothstep(0.84, 1.0, length(surface));
@@ -96,9 +104,9 @@ vec3 add_offerings(vec3 room, vec2 uv) {
 	if (family_cups && uv.x > 0.29 && uv.x < 0.44 && uv.y > 0.48 && uv.y < 0.54) {
 		vec3 hall_light = vec3(0.58, 0.48, 0.40);
 		vec2 cup_size = vec2(0.028, 0.030);
-		room = place_cup(room, uv, vec2(0.306, 0.497), cup_size, hall_light, tea, family_tea);
-		room = place_cup(room, uv, vec2(0.351, 0.497), cup_size, hall_light, wine, family_wine);
-		room = place_cup(room, uv, vec2(0.396, 0.497), cup_size, hall_light, tea, family_tea);
+		room = place_cup(room, uv, vec2(0.306, 0.497), cup_size, hall_light, tea, family_tea_left, false);
+		room = place_cup(room, uv, vec2(0.351, 0.497), cup_size, hall_light, wine, family_wine, true);
+		room = place_cup(room, uv, vec2(0.396, 0.497), cup_size, hall_light, tea, family_tea_right, false);
 	}
 	if (kitchen && uv.x < 0.34) {
 		vec3 kitchen_light = vec3(0.60, 0.50, 0.41);
@@ -110,9 +118,9 @@ vec3 add_offerings(vec3 room, vec2 uv) {
 		}
 		if (kitchen_items.x > 0.5 && uv.y > 0.59 && uv.y < 0.69) {
 			vec2 cup_size = vec2(0.027, 0.042);
-			room = place_cup(room, uv, vec2(0.123, 0.626), cup_size, kitchen_light, tea, false);
-			room = place_cup(room, uv, vec2(0.150, 0.618), cup_size, kitchen_light, tea, false);
-			room = place_cup(room, uv, vec2(0.177, 0.611), cup_size, kitchen_light, tea, false);
+			room = place_cup(room, uv, vec2(0.123, 0.626), cup_size, kitchen_light, tea, false, false);
+			room = place_cup(room, uv, vec2(0.150, 0.618), cup_size, kitchen_light, tea, false, false);
+			room = place_cup(room, uv, vec2(0.177, 0.611), cup_size, kitchen_light, tea, false, false);
 		}
 		if (kitchen_items.w > 0.5) {
 			room = place_kitchen_prop(room, uv, vec2(0.255, 0.297), vec2(0.051, 0.058), kitchen_light, 3);
@@ -169,6 +177,13 @@ vec3 sample_room(vec3 room, vec2 uv) {
 	if (burner_paper) {
 		room = add_burner_paper(room, uv);
 	}
+	if (watcher_strength > 0.0) {
+		vec2 watcher_uv = (uv - watcher_area.xy) / watcher_area.zw;
+		if (all(greaterThanEqual(watcher_uv, vec2(0.0))) && all(lessThanEqual(watcher_uv, vec2(1.0)))) {
+			vec4 figure = texture(watcher, watcher_uv);
+			room = mix(room, figure.rgb * vec3(0.56, 0.49, 0.43), smoothstep(0.35, 0.9, figure.a) * watcher_strength);
+		}
+	}
 	return room;
 }
 
@@ -193,6 +208,15 @@ void fragment() {
 	}
 	uv.x += unease * (0.004 * sway + 0.007 * sin(centered.y * 4.0 + scene_time * 0.73));
 	uv.y += unease * centered.x * 0.004 * sway;
+	float slip = 0.0;
+	if (reveal_glitch) {
+		float early = (scene_time - 0.92) * 12.0;
+		float late = (scene_time - 3.76) * 13.0;
+		float pulse = max(exp(-early * early), exp(-late * late) * 0.64);
+		float band_pos = fract(0.2 + scene_time * 0.2);
+		slip = pulse * (1.0 - smoothstep(0.012, 0.064, abs(uv.y - band_pos)));
+		uv.x += slip * (0.005 + 0.0025 * sin(uv.y * 680.0));
+	}
 	uv = (uv - vec2(0.5)) * 0.97 + vec2(0.5);
 	uv = clamp(uv, pixel * 2.0, vec2(1.0) - pixel * 2.0);
 
@@ -229,12 +253,15 @@ void fragment() {
 	float dip_time = (scene_time - 2.8) * 1.7;
 	float shadow_x = mix(0.18, 0.80, smoothstep(1.9, 3.7, scene_time));
 	float shadow = (1.0 - smoothstep(0.035, 0.19, abs(uv.x - shadow_x))) * exp(-dip_time * dip_time);
-	picture *= (1.0 - unease * red_light * shadow * 0.72) * view_level;
+	picture *= 1.0 - unease * red_light * shadow * 0.72;
+	float dark_mask = 1.0 - smoothstep(0.09, 0.46, luminance);
+	picture *= 1.0 - house_dread * (0.13 + 0.13 * dark_mask);
+	picture.rb += (left.rb - right.rb) * slip * 0.12;
 
 	float grain_frame = mod(floor(scene_time * 10.0), 256.0);
 	float speckle = noise_at(floor(UV * signal_size) + vec2(37.0, 17.0) * grain_frame) - 0.5;
 	float grain_weight = smoothstep(0.02, 0.23, luminance) * (1.0 - smoothstep(0.48, 0.91, luminance));
-	COLOR.rgb = clamp(picture + speckle * grain * grain_weight, vec3(0.0), vec3(1.0));
+	COLOR.rgb = clamp(picture + speckle * (grain + 0.055 * house_dread + (reveal_glitch ? 0.045 : 0.0)) * grain_weight, vec3(0.0), vec3(1.0));
 	if (transparent_prop) {
 		float alpha = texture(TEXTURE, uv).a;
 		COLOR.a = alpha * smoothstep(0.015, 0.075, alpha) * opacity;

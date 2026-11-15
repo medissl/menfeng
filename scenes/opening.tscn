@@ -221,18 +221,6 @@ texture = ExtResource("2")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="SceneMatch" type="TextureRect" parent="."]
-unique_name_in_owner = true
-visible = false
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-expand_mode = 1
-stretch_mode = 6
-
 [node name="InspectionProp" type="TextureRect" parent="."]
 unique_name_in_owner = true
 visible = false
@@ -1131,6 +1119,46 @@ mouse_filter = 2
 theme_override_fonts/font = ExtResource("7")
 theme_override_font_sizes/font_size = 31
 horizontal_alignment = 1
+
+[node name="MemoryPercussion" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+bus = &"SFX"
+volume_db = -12.0
+
+[node name="CreditsRoll" type="Label" parent="."]
+unique_name_in_owner = true
+visible = false
+offset_top = 735.0
+offset_right = 1280.0
+offset_bottom = 1500.0
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 25
+theme_override_colors/font_color = Color(0.93, 0.87, 0.77, 1)
+theme_override_constants/line_spacing = 5
+horizontal_alignment = 1
+text = "MENFENG
+
+Creator and direction
+Medissl
+
+Story and writing
+Medissl
+
+Game design and development
+Medissl
+
+Art direction and analog effects
+Medissl
+
+Sound design and mix
+Medissl
+
+Playtesting
+Medissl
+
+Housekeeping
+Medissl (still pending)"
 
 [node name="SceneCurtain" type="ColorRect" parent="."]
 unique_name_in_owner = true
