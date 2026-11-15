@@ -8,6 +8,8 @@ uniform float color_bleed : hint_range(0.0, 1.0) = 0.38;
 uniform float scene_time = 0.0;
 uniform float unease : hint_range(0.0, 1.0) = 0.0;
 uniform bool driving = false;
+uniform float road_time = 0.0;
+uniform float road_motion = 0.0;
 uniform vec2 inspect_at = vec2(0.5);
 uniform float inspect_zoom : hint_range(0.0, 0.2) = 0.0;
 uniform float inspect_blur : hint_range(0.0, 1.0) = 0.0;
@@ -186,8 +188,8 @@ void fragment() {
 	float sway = sin(scene_time * 1.05);
 	uv += centered * dot(centered, centered) * 0.042;
 	if (driving) {
-		uv -= centered * (1.0 - exp(-scene_time * 0.3)) * 0.085;
-		uv.y += (sin(scene_time * 4.5) + 0.4 * sin(scene_time * 8.3)) * 0.002;
+		uv -= centered * (1.0 - exp(-road_time * 0.3)) * 0.085;
+		uv.y += (sin(road_time * 4.5) + 0.4 * sin(road_time * 8.3)) * 0.002 * road_motion;
 	}
 	uv.x += unease * (0.004 * sway + 0.007 * sin(centered.y * 4.0 + scene_time * 0.73));
 	uv.y += unease * centered.x * 0.004 * sway;

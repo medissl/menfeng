@@ -15,7 +15,7 @@ enum Stage {
 enum RitualAction {
 	NONE, TAKE, PLACE, LIGHT, TURN_PORTRAIT, TAKE_PORTRAIT, PLACE_PORTRAIT,
 	TAKE_OFFERING, USE_OFFERING, LIFT_BOARD, TAKE_VESSEL, SET_VESSEL, OPEN_VESSEL,
-	TAKE_CHALK, MARK_FOREHEAD, PLACE_PAPER, BURN_OFFERING, CLOSE_EYES, OPEN_EYES, TURN_RECEIPT, FOLLOW_WELL_ROPE,
+	TAKE_CHALK, MARK_FOREHEAD, PLACE_PAPER, BURN_OFFERING, CLOSE_EYES, OPEN_EYES, TURN_RECEIPT, FOLLOW_WELL_ROPE, REACH_FOR_AH_MA,
 }
 enum DrivePart { ROAD, RINGING, CALL, AFTER_CALL }
 
@@ -57,9 +57,8 @@ const LIT_BURNER := preload("res://assets/finale/lit-burner.jpg")
 const FINAL_TAPE_CARD := preload("res://assets/finale/tape-card.jpg")
 const INVITATION_STILL := preload("res://assets/finale/invitation-still.jpg")
 const TV_SEATED := preload("res://assets/ritual/crt-seated.jpg")
-const REVEAL_HOLD := 6.1
 const REVEAL_FADE := 0.65
-const REVEAL_CHAIN_DELAY := 1.25
+const REVEAL_HAND_DELAY := 1.15
 
 const OBJECTIVES := {
 	Stage.RESPECTS: "Speak to Ah Ma at the ancestor altar beside Pek Kong.",
@@ -168,7 +167,8 @@ const INSPECTIONS := {
 		["Front door", [Rect2(575, 233, 181, 269)], [], Screen.HALL],
 	],
 	Screen.HALL: [
-		["Ancestor altar", [Rect2(195, 216, 378, 181)], ["Someone’s set Ah Ma’s picture beside the old family photo. There’s space on the shelf to her right."]],
+		["Family portraits", [Rect2(242, 224, 226, 116)], ["There’s Ah Ma, next to the old family photo."]],
+		["Ancestor altar", [Rect2(195, 340, 378, 73)], ["The ash in the incense burner is cold."]],
 		["Pek Kong shrine", [Rect2(588, 140, 149, 251)], ["Pek Kong looked after the house. Ah Ma used to lift me up so I could see his face."]],
 		["Tea tray", [Rect2(471, 580, 262, 60)], ["The little pot was cold. Ah Ma used to set it between her palms first to see if it was still warm enough to pour."]],
 		["Kitchen door", [Rect2(86, 151, 106, 356)], [], Screen.KITCHEN],
@@ -184,7 +184,7 @@ const INSPECTIONS := {
 		["TV and VHS deck", [Rect2(1019, 204, 198, 217)], ["The tape is still in the deck."]],
 	],
 	Screen.GUEST_BEDROOM: [
-		["Old bed", [Rect2(135, 320, 493, 245)], ["I used to sleep with the door open so I could hear her moving around."]],
+		["Old bed", [Rect2(147, 320, 481, 245)], ["She still tucked the blanket all the way under."]],
 		["Travel bag", [Rect2(724, 230, 302, 204)], ["She kept the things I used to bring for the holidays."]],
 	],
 	Screen.BEDROOM: [
@@ -218,7 +218,7 @@ const INSPECTIONS := {
 
 const PROVERB := "前人栽樹，後人乘涼。"
 const WARNING := "前人種禍，後人遭殃。"
-const INTRO_FIRST_CARD_SECONDS := 9.0
+const INTRO_FIRST_CARD_SECONDS := 8.0
 const INTRO_RED_HOLD_SECONDS := 5.0
 const INTRO_FADE_SECONDS := 0.75
 const TEXT_CHARACTERS_PER_SECOND := 90.0
@@ -228,7 +228,6 @@ const INSPECTION_IMAGES := {
 	"Ti Kong incense burner": preload("res://assets/inspection/ti-kong-burner.png"),
 	"Side door decorations": preload("res://assets/inspection/door-decorations.png"),
 	"Lucky’s bowl and chain": preload("res://assets/inspection/lucky-bowl.png"),
-	"Ancestor altar": preload("res://assets/inspection/family-portraits.png"),
 	"Photo album and note": preload("res://assets/inspection/family-album.png"),
 	"Incense and tin": preload("res://assets/inspection/incense-tin.png"),
 
@@ -280,6 +279,8 @@ const INSPECTION_IMAGES := {
 
 var screen := Screen.TITLE
 var drive_part := DrivePart.ROAD
+var road_motion := 0.0
+var road_time := 0.0
 var stage := Stage.ARRIVAL
 var collected_items: Array[StringName] = []
 var held_item: StringName = &""
@@ -371,11 +372,9 @@ func _process(delta: float) -> void:
 		return
 	if panel == Overlay.NONE:
 		scene_time += delta
-		if screen == Screen.REVEAL and not reveal_readable and scene_time >= REVEAL_HOLD:
-			reveal_readable = true
-			_set_line(StoryText.FINAL_LINE)
-			_set_action_label("")
 		picture.set_shader_parameter("scene_time", scene_time)
+		if screen == Screen.DRIVE:
+			_update_road_motion(delta)
 		text_signal.set_shader_parameter("scene_time", scene_time)
 		if inspection_prop.visible:
 			prop_picture.set_shader_parameter("scene_time", scene_time)
@@ -481,9 +480,6 @@ func _advance(perform_action := false) -> void:
 			elif screen == Screen.HALL and not rain_stopped and narration_index == lines.size() - 1:
 				rain_stopped = true
 				_mix_scene_audio()
-		elif screen == Screen.SITTING and stage == Stage.NOTE and not seen_arrivals.has(Screen.SOFA_MEMORY):
-			_show_screen(Screen.SOFA_MEMORY)
-			return
 		elif INSPECTIONS.has(screen):
 			seen_arrivals.append(screen)
 			_show_exploration()
@@ -533,18 +529,24 @@ func _continue_drive() -> void:
 	match drive_part:
 		DrivePart.ROAD:
 			drive_part = DrivePart.RINGING
-			picture.set_shader_parameter("driving", false)
-			engine.volume_db = -17.0
 			phone_ring.play()
-			_set_line("Dad’s name lit the screen. I pulled into the turnout at the bend.", "", "Phone ringing")
+			_set_line("Dad. I’ll pull over here.", "", "Phone ringing")
 			_set_action_label("Answer the phone")
 		DrivePart.CALL:
 			drive_part = DrivePart.AFTER_CALL
-			picture.set_shader_parameter("driving", true)
-			engine.volume_db = 0.0
 			_start_road_lines(StoryText.AFTER_CALL)
 		DrivePart.AFTER_CALL:
 			_show_screen(Screen.YARD)
+
+
+func _update_road_motion(delta: float) -> void:
+	var target := 1.0 if drive_part in [DrivePart.ROAD, DrivePart.AFTER_CALL] else 0.0
+	road_motion = move_toward(road_motion, target, delta / 1.1)
+	var suspension := smoothstep(0.0, 1.0, road_motion)
+	road_time += delta * suspension
+	picture.set_shader_parameter("road_time", road_time)
+	picture.set_shader_parameter("road_motion", suspension)
+	engine.volume_db = lerpf(-17.0, 0.0, suspension)
 
 
 func _answer_phone() -> void:
@@ -566,6 +568,7 @@ func _show_screen(next: Screen) -> void:
 	if blackout:
 		return
 	blackout = true
+	%Objective.hide()
 	%SceneCurtain.mouse_filter = Control.MOUSE_FILTER_STOP
 	var focus := get_viewport().gui_get_focus_owner()
 	if focus:
@@ -638,6 +641,9 @@ func _enter_screen(next: Screen) -> void:
 	picture.set_shader_parameter("view_level", 0.56 if screen == Screen.COUCH else 1.0)
 	if screen == Screen.DRIVE:
 		drive_part = DrivePart.ROAD
+		road_motion = 1.0
+		road_time = 0.0
+		_update_road_motion(0.0)
 	scene_time = 0.0
 	intro_time = 0.0
 	intro_glitch_started = false
@@ -668,10 +674,10 @@ func _enter_screen(next: Screen) -> void:
 			screen_lines = StoryText.BACK_IN_ROOM
 		elif not seen_arrivals.has(screen):
 			screen_lines = StoryText.BEDROOM_ARRIVAL
-	elif screen == Screen.SITTING and stage == Stage.NOTE:
+	elif screen == Screen.SITTING:
 		if previous == Screen.SOFA_MEMORY:
-			screen_lines = StoryText.AFTER_SOFA
-		elif not seen_arrivals.has(Screen.SOFA_MEMORY):
+			screen_lines = StoryText.AFTER_SOFA if stage == Stage.NOTE else []
+		elif not seen_arrivals.has(Screen.SITTING) and stage == Stage.NOTE:
 			screen_lines = StoryText.SITTING_ARRIVAL
 	if screen == Screen.WARDROBE and shelf_lifted and not seen_arrivals.has(Screen.WARDROBE):
 		screen_lines = StoryText.WARDROBE_RAISED
@@ -731,13 +737,38 @@ func _finish_transition() -> void:
 	elif screen == Screen.COUCH:
 		_play_scare(COUCH_SHIFT, -9.0, "")
 	elif screen == Screen.REVEAL:
-		_queue_scare(WRIST_CHAIN, -10.0, "Chain links scrape together", REVEAL_CHAIN_DELAY)
-		scare_sequence.tween_interval(WRIST_CHAIN.get_length() + 0.37)
-		scare_sequence.tween_callback(_play_scare.bind(GRANDPA_LAUGH, -9.0, "A quiet laugh behind Ah Ma"))
+		scare_sequence = create_tween()
+		scare_sequence.tween_interval(REVEAL_HAND_DELAY)
+		scare_sequence.tween_callback(_offer_ah_ma_hand)
 	_update_objective()
-	if screen not in [Screen.INTRO, Screen.REVEAL]:
+	if not arriving and screen not in [Screen.INTRO, Screen.REVEAL]:
 		var target := hotspots[0] if keyboard_navigation and not hotspots.is_empty() else _default_focus()
 		target.grab_focus()
+
+
+func _offer_ah_ma_hand() -> void:
+	ritual_action = RitualAction.REACH_FOR_AH_MA
+	_set_action_label("Take Ah Ma’s hand")
+	action.grab_focus()
+
+
+func _reach_for_ah_ma() -> void:
+	ritual_action = RitualAction.NONE
+	action.release_focus()
+	_set_action_label("")
+	_set_inspection_zoom(Vector2(0.32, 0.68), 0.065)
+	_queue_scare(WRIST_CHAIN, -10.0, "Chain links scrape together", 0.28)
+	scare_sequence.tween_interval(WRIST_CHAIN.get_length() + 0.60)
+	scare_sequence.tween_callback(_play_scare.bind(GRANDPA_LAUGH, -13.0, "A quiet laugh behind Ah Ma"))
+	scare_sequence.tween_interval(1.90)
+	scare_sequence.tween_callback(_finish_ah_ma_reach)
+
+
+func _finish_ah_ma_reach() -> void:
+	reveal_readable = true
+	_set_line(StoryText.FINAL_LINE)
+	_set_action_label("")
+	turn_page.grab_focus()
 
 
 func _update_scene_audio(previous: Screen) -> void:
@@ -866,8 +897,13 @@ func _set_line(line: String, said_by: String = "", sound: String = "", original:
 	%SoundCue.visible = not cue.is_empty()
 	speaker.text = said_by
 	speaker.visible = not said_by.is_empty()
-	caption.position.y = 72.0 if original_caption.visible else 39.0
-	caption.add_theme_font_size_override("font_size", 21 if original_caption.visible else 33)
+	# The last English line stays at the same height when the caption wraps.
+	var extra_height := float(maxi(caption.get_line_count() - 1, 0) * caption.get_line_height())
+	caption.position.y = 72.0 - extra_height
+	original_caption.position.y = 39.0 - extra_height
+	speaker.position.y = (12.0 if original_caption.visible else 45.0) - extra_height
+	var first_row := speaker.position.y if speaker.visible else caption.position.y
+	%SoundCue.position.y = minf(556.0, textbox.position.y + first_row - 33.0)
 	textbox.visible = not line.is_empty()
 	%ReadingShade.visible = textbox.visible or %SoundCue.visible
 	_finish_text_reveal()
@@ -939,6 +975,9 @@ func _show_exploration() -> void:
 		for area: Rect2 in entry[1]:
 			var hotspot := _add_hotspot(_hotspot_name(entry[0]), area, _inspect.bind(entry, area))
 			hotspot.set_meta(&"scene_item", entry[0])
+	if screen == Screen.GUEST_BEDROOM:
+		if not remembered_door or (stage >= Stage.RETURN_TO_WELL and not bedroom_echo_seen):
+			_add_hotspot("Look back at the doorway", Rect2(28, 118, 118, 420), _look_back_at_doorway)
 	if RETURN_TO.has(screen):
 		_add_hotspot("Go back", Rect2(0, 644, 1280, 76), _show_screen.bind(RETURN_TO[screen]))
 	if keyboard_navigation and not hotspots.is_empty():
@@ -961,6 +1000,15 @@ func _add_hotspot(label: String, area: Rect2, activate: Callable) -> Button:
 	return hotspot
 
 
+func _look_back_at_doorway() -> void:
+	if remembered_door:
+		bedroom_echo_seen = true
+		_show_screen(Screen.BEDROOM_ECHO)
+	else:
+		settle.play()
+		_show_screen(Screen.MEMORY)
+
+
 func _show_memory_gap() -> void:
 	_set_line("")
 	_set_action_label("")
@@ -974,15 +1022,9 @@ func _show_memory_gap() -> void:
 func _inspect(entry: Array, area: Rect2) -> void:
 	_clear_hotspots()
 	var item: String = entry[0]
-	if item == "Old bed":
-		if not remembered_door:
-			settle.play()
-			_show_screen(Screen.MEMORY)
-			return
-		if stage >= Stage.RETURN_TO_WELL and not bedroom_echo_seen:
-			bedroom_echo_seen = true
-			_show_screen(Screen.BEDROOM_ECHO)
-			return
+	if item == "Couch" and stage < Stage.FINAL_LOOK and not seen_arrivals.has(Screen.SOFA_MEMORY):
+		_show_screen(Screen.SOFA_MEMORY)
+		return
 	if item == "TV and VHS deck" and stage >= Stage.WATCH_TAPE:
 		_open_tape(_latest_tape_chapter())
 		return
@@ -1009,8 +1051,6 @@ func _inspect(entry: Array, area: Rect2) -> void:
 			ritual_action = RitualAction.TAKE_OFFERING
 	if item == "Sitting-room cabinet" and stage == Stage.TAKE_PORTRAIT:
 		detail = PORTRAIT_FRONT
-	if item == "Ancestor altar" and stage >= Stage.PLACE_INCENSE:
-		detail = null
 	var label := _prepare_inspection(item)
 	if item == "Incense and tin" and stage >= Stage.PLACE_INCENSE:
 		detail = CHALK_TIN if stage == Stage.TAKE_CHALK else null
@@ -1026,7 +1066,8 @@ func _inspect(entry: Array, area: Rect2) -> void:
 		prop_picture.set_shader_parameter("scene_time", scene_time)
 		_set_inspection_zoom(Vector2(0.5, 0.5), 0.0)
 	else:
-		_set_inspection_zoom(area.get_center() / Vector2(1280.0, 720.0), 0.15)
+		var zoom := 0.09 if item == "Ancestor altar" else 0.15
+		_set_inspection_zoom(area.get_center() / Vector2(1280.0, 720.0), zoom)
 	_set_line(inspection_lines[0], "Dad’s note" if reading_note else "")
 	_set_action_label(label)
 	if ritual_action in [RitualAction.PLACE, RitualAction.PLACE_PORTRAIT, RitualAction.USE_OFFERING,
@@ -1046,6 +1087,7 @@ func _hotspot_name(item: String) -> String:
 			if stage == Stage.TAKE_CHALK: return "Small tin"
 		"Couch":
 			if stage == Stage.FINAL_LOOK: return "Sit on the couch"
+			if not seen_arrivals.has(Screen.SOFA_MEMORY): return "Look at the empty seat"
 		"Burner":
 			if stage == Stage.TAKE_VESSEL and held_item == &"vessel": return "Set down the vessel"
 			if stage == Stage.TAKE_VESSEL and vessel_at_burner: return "Inspect the vessel"
@@ -1055,8 +1097,6 @@ func _hotspot_name(item: String) -> String:
 		return "Ah Ma’s tape · Chapter %d" % _latest_tape_chapter()
 	if item == "Sitting-room cabinet" and stage == Stage.TAKE_PORTRAIT:
 		return "Find Grandpa’s portrait"
-	if item == "Old bed" and not remembered_door:
-		return "Look at the bed"
 	if item == "Ancestor altar":
 		if stage == Stage.RESPECTS:
 			return "Speak to Ah Ma"
@@ -1124,7 +1164,9 @@ func _prepare_inspection(item: String) -> String:
 			ritual_action = RitualAction.TURN_PORTRAIT
 			return "Turn the frame over"
 		if stage >= Stage.PLACE_PORTRAIT:
-			inspection_lines = ["There’s a clean rectangle in the dust behind the bowls."]
+			inspection_lines = ["There’s a clean spot where the frame was."]
+	elif item == "Family portraits" and stage >= Stage.OFFERINGS_TAPE:
+		inspection_lines = ["Grandpa’s back with the rest of the family."]
 	elif item == "Ancestor altar":
 		match stage:
 			Stage.RESPECTS:
@@ -1253,6 +1295,9 @@ func _perform_ritual_action() -> void:
 		RitualAction.OPEN_EYES:
 			stage = Stage.FINISHED
 			_show_screen(Screen.REVEAL)
+			return
+		RitualAction.REACH_FOR_AH_MA:
+			_reach_for_ah_ma()
 			return
 		RitualAction.TAKE:
 			stage = Stage.PLACE_INCENSE
@@ -1453,7 +1498,7 @@ func _update_objective() -> void:
 		elif screen == Screen.HALL:
 			task = "Go to your old bedroom, the first door beside the altar."
 		elif screen == Screen.GUEST_BEDROOM:
-			task = "Look at your old bed."
+			task = "Look back at the doorway."
 	elif stage == Stage.PLACE_INCENSE and held_item == &"incense":
 		task = "Place the incense in the burner."
 	elif stage == Stage.PLACE_PORTRAIT and held_item == &"portrait":
@@ -1466,8 +1511,8 @@ func _update_objective() -> void:
 		task = "Hold the folded joss paper from your inventory."
 	var free_view := INSPECTIONS.has(screen)
 	label.text = task
-	label.visible = free_view and not task.is_empty() and not textbox.visible and not blackout
-	%InventoryButton.visible = stage >= Stage.RESPECTS and free_view and not textbox.visible
+	label.visible = free_view and not hotspots.is_empty() and not arriving and not task.is_empty() and not textbox.visible and not blackout
+	%InventoryButton.visible = stage >= Stage.RESPECTS and free_view and not arriving and not textbox.visible
 	%Carried.visible = %InventoryButton.visible and held_item != &""
 	%HeldDash.visible = %Carried.visible
 	%Carried.text = inventory.held_description(held_item) if %Carried.visible else ""

@@ -1,10 +1,10 @@
 extends RefCounted
 
 const DRIVE := [
-	"The rain started where the pavement ended. The tires slipped on the red dirt, and I took my foot off the accelerator.",
-	"When I was little, Dad would sound the horn at the bend. By the time we pulled up, Ah Ma would be standing under the eaves.",
-	"She always checked my feet first. The year I outgrew the slippers by the door, she’d already bought the next size.",
-	"I’d told Dad I couldn’t get away from work for the funeral. The truth was, I could have made it if I’d left straight away.",
+	"The tires slipped as soon as I hit the dirt road.",
+	"Dad used to honk at this bend. Ah Ma would be out front by the time we got there.",
+	"She always kept slippers by the door for me. Somehow they still fit every year.",
+	"I told Dad I had to work through the funeral. I could’ve left early.",
 ]
 
 const PHONE_CALL := [
@@ -23,109 +23,109 @@ const PHONE_CALL := [
 ]
 
 const AFTER_CALL := [
-	"I set the phone face down. When I pulled back onto the road, the first thing I saw was the porch light through the trees.",
-	"I tried it out with no one there to hear. Ah Ma, I’m home.",
+	"There’s the porch light. Almost there.",
+	"Ah Ma, I’m home. I could start with that.",
 ]
 
 const YARD := [
 	"Does nobody take care of this house anymore?",
-	"The porch light was still on. In the rain I could see where she’d patched the wire with a strip of tape.",
-	"I checked the time in the car before I got out. Six o’clock. Already there was no light between the trees.",
-	"I used to know every turn on the way down. Tonight I’d rather stay in my old room and leave when I could see the road.",
+	"She’d fixed the porch light with tape again.",
+	"It was only six. I could barely see where I’d parked.",
+	"I’ll sleep here. I can drive back in the morning.",
 ]
 
 const HALL := [
-	"Pek Kong was in his usual place. On the separate table beside his shrine, a new photograph had been set among the old ones.",
-	"It was the one Dad had sent after the funeral. I’d looked at it on my phone. Here I could see the pin holding her collar together.",
-	"Ah Ma used to keep a rag folded under the table. She’d wipe the frames while she waited for the kettle.",
-	"I stood by the door until the rain thinned to dripping. Then I went to see if she’d kept my room.",
+	"Pek Kong was right where I remembered him.",
+	"Dad had put Ah Ma’s picture with the family photos beside the shrine.",
+	"She used to wipe those frames while the kettle boiled.",
+	"I should say hello. Let me put my bag down first.",
 ]
 
 const BEDROOM_ARRIVAL := [
-	"The bed was still made. The far corner of the blanket sat higher where she used to fold it under twice.",
-	"When I was small, she’d tuck me in so tightly I had to work both feet loose before I could get out.",
+	"She still had my blanket from the summer holidays.",
+	"I’d better leave the door a little open. I used to hate it shut.",
 ]
 
 const NIGHT_MEMORY := [
-	"I remember working my feet free. My heels stuck to the sheet. It was still summer, then, and Ah Ma was in the doorway.",
-	["Ah Ma", "Leave your shoes by the bed. The boards get cold at night.", "鞋子放床邊。晚上地板會冷。"],
-	["As a child", "Can you leave the door a little bit open?"],
-	["Ah Ma", "I’ll be right outside. Call me if you need me. I’ll hear you.", "阿嬤就在外面。有事叫我，我聽得到。"],
-	"She pulled the door to. I waited for the latch to catch. After that, I only remember waking up to a thin red line across the boards.",
-	"Then I heard her voice. I waited for her to say my name.",
-	"I put my feet down where she’d left my shoes and knelt by the door.",
+	"That door used to squeak. I remember one night when the latch wouldn’t catch.",
+	["Ah Ma", "Keep your slippers by the bed. The floor gets cold.", "拖鞋放床邊。晚上地板會冷。"],
+	["You, as a child", "Can you leave it open a bit?", "門可以留一點縫嗎？"],
+	["Ah Ma", "I’ll be right outside. Just call me.", "阿嬤就在外面。有事就叫我。"],
+	"I fell asleep. When I woke up, there was red light under the door.",
+	"I could hear Ah Ma talking.",
+	"I got out of bed to see who was there.",
 ]
 
 const PEEK := [
-	"I could see her slippers at the far end of the gap. I’d worn the same pair that afternoon to carry her washing in.",
-	"She stopped in the middle of a phrase. One slipper turned. A second shadow stayed across the boards.",
-	"I pulled my hand back from the door. I lay in bed until the window began to get light.",
+	"I could see Ah Ma’s slippers.",
+	"She stopped talking. Her feet turned. The other shadow stayed put.",
+	"I went back to bed. I didn’t sleep.",
 ]
 
 const BREAKFAST := [
-	"By breakfast I’d almost worked out how to ask. I waited until she’d scraped the burnt rice from the bottom of the pot.",
-	["As a child", "Ah Ma, I heard you outside my room last night. Who were you talking to?"],
-	["Ah Ma", "Ah Ma was just praying.", "阿嬤只是在拜拜啦。"],
-	["As a child", "I thought someone was standing with you."],
-	"She picked a piece of sweet potato out of her own bowl and put it in mine.",
-	["Ah Ma", "If you’re still scared in the morning, come get me. Now eat while it’s hot.", "早上還怕的話，就來找阿嬤。先趁熱吃。"],
+	"I waited until breakfast to ask her.",
+	["You, as a child", "Ah Ma, who were you talking to last night?", "阿嬤，你昨晚在跟誰講話？"],
+	["Ah Ma", "Just praying.", "拜拜啦。"],
+	["You, as a child", "But I saw somebody.", "可是我有看到別人啊。"],
+	"She gave me the sweet potato from her bowl.",
+	["Ah Ma", "Next time you get scared, come get me. Eat before it gets cold.", "下次會怕就來找阿嬤。快吃，等一下就涼了。"],
 ]
 
 const BACK_IN_ROOM := [
-	"I put a hand on the blanket. It was cold under my palm.",
-	"I took my hand off the blanket. I heard Dad’s words again. Start by telling her you’re home.",
+	"The blanket was cold.",
+	"I still hadn’t said hello.",
 ]
 
 const ANCESTORS := [
 	"Ah Ma, I’m home.",
-	"I’m sorry I missed your funeral. Dad sent me a picture of the flowers. I looked at it at my desk and went back to work.",
-	"I always thought I could come on the next holiday. You never used to ask me when I’d be back. You’d just put the blanket on the bed.",
-	"I stood there a little longer. The tape Dad had put aside was still waiting for me in the sitting room.",
+	"I’m sorry I missed your funeral.",
+	"I kept saying I’d come back next holiday.",
+	"Dad said you left me a tape. I’ll go watch it now.",
 ]
 
 const SITTING_ARRIVAL := [
-	"The lace had slipped down the back of the sofa. When Ah Ma folded the washing here, she’d slide it back up with her elbow.",
-	"I used to sit on the floor by her feet. One evening I was sorting socks when I heard her laugh.",
+	"She used to fold the washing here.",
+	"I’d sit on the floor and pair up her socks.",
 ]
 
 const SOFA_MEMORY := [
-	"The fan clicked every time it turned. My job was to match the socks, but I’d made a puppet out of one with a hole in the toe.",
-	["Ah Ma", "Put that one aside. I’ll mend it later.", "那隻先放旁邊。阿嬤晚一點補。"],
-	"She folded a towel over her knees. Then she turned to the other end of the sofa and smiled.",
-	["Ah Ma", "You used to do that too. Every time I asked you to help.", "你以前也這樣。每次叫你幫忙就這樣。"],
-	"She left the same little pause she always left when someone was about to answer. Then she laughed again.",
-	"I looked at the cushion beside her. A loose thread was sticking out of the seam. I could see it perfectly.",
-	["As a child", "Ah Ma? Who are you talking to?"],
-	"She looked back at me, still smiling. She handed me two socks. One was still warm from her lap.",
-	["Ah Ma", "Put these away for me, will you? Then we’ll get you ready for bed.", "幫阿嬤把這個收起來，好不好？等一下就去睡覺。"],
+	"I’d stuck my finger through a hole in one of her socks.",
+	["Ah Ma", "Give me that one. I’ll fix it later.", "那隻給阿嬤，晚點再補。"],
+	"She turned to the other end of the couch.",
+	["Ah Ma", "You used to do that too. Remember?", "你以前也會這樣。還記得嗎？"],
+	"She waited a second. Then she laughed.",
+	"The seat beside her was empty.",
+	["You, as a child", "Ah Ma? Who’s there?", "阿嬤？誰在那裡？"],
+	"She handed me a pair of socks.",
+	["Ah Ma", "Put these away for me. It’s almost bedtime.", "幫阿嬤把襪子收起來。等一下要睡覺了。"],
 ]
 
 const AFTER_SOFA := [
-	"The cushion hadn’t moved. The thread had been pulled out or worn away. I had to lean over to see where it used to be.",
-	"Dad’s note was on the table beside the couch.",
+	"I’d never asked her about it again.",
+	"Dad left a note by the couch.",
 ]
 
 const FATHERS_NOTE := [
-	"I left the tape in the player. She had wrapped it in a tea towel before she gave it to me.",
-	"I watched a little to make sure it worked. When she started talking to you, I stopped it and wound it back.",
-	"In the photo underneath, Dad and his brother are wearing uniforms. Their sister still has on the apron she wore at home.",
-	"Ah Ma was thirty when Grandpa died. Dad said she got all three children to school before she went to work.",
-	"Some days he came home before she did. Even then, there was always something left for him in the pot.",
+	"‘The tape’s in the player. She gave it to me wrapped in a towel.’",
+	"‘I checked it worked. It’s for you, so I rewound it. —Dad’",
+	"That’s Dad in the photo. His brother’s next to him. Their sister’s still in her apron.",
+	"Grandpa got sick and died when Ah Ma was thirty. She raised all three on her own.",
+	"Dad says there was always something for him to eat when he got home.",
 ]
 
 const TAPE_ONE := [
-	["你來啦。阿嬤就想，會不會是你。", "You made it. I thought it might be you."],
-	["下雨的話，鞋子放門邊就好。", "If it’s raining, leave your shoes by the door."],
-	["你小時候下雨也要跑出去。", "You used to run out in the rain when you were small."],
-	["回來兩隻腳都是泥巴，還不肯換鞋。", "You’d come back with mud all over your feet and refuse to change."],
-	["你阿公走了以後，我天天煮一大鍋粥。", "After your grandpa died, I made a big pot of porridge every day."],
-	["三個孩子吃飽了，我才去上工。", "I went to work once all three children had eaten."],
-	["你爸去城裡工作，我還是煮那麼多。", "When your dad left for work in the city, I still made the same amount."],
-	["後來只剩我一個人，我就把小鍋找出來。", "When it was just me, I got the little pot out again."],
-	["天黑了就住一晚。那條路白天都看不清楚。", "If it’s dark, stay the night. That road’s hard enough to see in daylight."],
-	["我房間的梳妝台上有一束香。", "There’s a bundle of incense on the dresser in my room."],
-	["拿三支，插在照片前的香爐，點起來。", "Take three sticks and light them in the burner in front of the family photos."],
-	["做完了再回來。阿嬤還有話要跟你說。", "Come back when you’re done. Ah Ma has something else to tell you."],
+	["你來啦。食飽未？", "You made it. Have you eaten?"],
+	["下雨的話，鞋子擱門邊就好。", "If it’s raining, leave your shoes by the door."],
+	["你小時候喔，一下雨就往外跑。", "When you were little, a bit of rain and you’d be straight out the door."],
+	["踩得一腳泥，叫你換鞋也不肯。", "You’d track mud in and refuse to change your shoes."],
+	["你阿公走了以後，你爸他們每天早上都吃稀飯。", "After Grandpa died, your dad and the others had rice porridge every morning."],
+	["三個都吃飽了，我才去上工。", "I’d feed all three kids, then go to work."],
+	["你爸搬出去了，我早上還是煮一大鍋。", "Your dad moved out and I still made a whole pot every morning."],
+	["我一個人哪吃得完？後來就換小鍋了。", "How was I meant to finish all that? I got the little pot out in the end."],
+	["天黑了就別下山，住一晚。", "Stay over if it’s dark. Don’t drive back down."],
+	["我房間梳妝台上有香。", "There’s incense on my dresser."],
+	["拿三支，到祖先桌前點。", "Light three sticks at the ancestor altar."],
+	["點完再回來。我還有話跟你說。", "Come back after. I’ve got more to tell you."],
 ]
 const TAPE_GLANCE_BEAT := 7
 const TAPE_ONE_REWATCH := TAPE_ONE + [
@@ -133,58 +133,58 @@ const TAPE_ONE_REWATCH := TAPE_ONE + [
 ]
 
 const TAPE_TWO := [
-	["你還記得阿公那張小照片嗎？", "Do you remember that little picture of Grandpa?"],
-	["就在客廳的櫃子裡。", "It’s inside the cabinet in the sitting room."],
-	["以前你問我，為什麼阿公沒有變老。", "You once asked me why Grandpa never got old."],
-	["那時候我說，照片裡的人不會老。", "I told you people don’t get old inside photographs."],
-	["幫阿嬤把它擺在照片前的香爐旁邊。", "Could you set it beside the burner at the ancestor altar for me?"],
+	["你還記得阿公那張小照片嗎？", "Remember that little photo of Grandpa?"],
+	["在客廳櫃子裡。", "It’s in the cabinet in the sitting room."],
+	["你以前問我，阿公怎麼都沒變老。", "You used to ask why Grandpa never got old."],
+	["我說照片裡的人不會老。", "I said people don’t get old in photos."],
+	["幫我放在祖先桌上，香爐旁邊。", "Put it beside the incense burner at the ancestor altar."],
 ]
 
 const TAPE_THREE := [
-	["你還記得那三個小杯子嗎？", "Do you remember the three little cups?"],
-	["杯子、茶和酒都在廚房。", "The cups, the tea, and the wine are in the kitchen."],
-	["把三個杯子擺在祖先桌前面。左右倒茶，中間倒酒。", "Set the cups at the front of the ancestor table. Tea on either side, wine in the middle."],
-	["櫃子上也有一疊金紙。先拿著，別急著燒。", "There’s joss paper on the shelf. Take it with you and leave it folded."],
-	["出去看看金爐。經過浴室的時候，也幫阿嬤看一下水井。", "Check the burner out back. On your way, have a look at the well for me."],
-	["阿嬤還有一件事，想慢慢跟你說。", "There’s one more thing I need to tell you. Let me take my time."],
+	["廚房有三個小杯子。你爸小時候老問，中間那杯是給誰的。", "There are three cups in the kitchen. Your dad used to ask who the middle one was for."],
+	["茶跟米酒也在那裡。", "The tea and rice wine are there too."],
+	["杯子擺祖先桌上。兩邊倒茶，中間倒酒。", "Set the cups at the ancestor altar. Tea on the sides, wine in the middle."],
+	["架上的金紙先拿著，別燒。", "Take the joss paper off the shelf. Don’t burn it yet."],
+	["去屋後看看金爐。浴室裡的井也看一下。", "Check the burner out back. Take a look at the well in the bathroom too."],
+	["都看過了，再回來找我。", "Come back when you’re done."],
 ]
 const TAPE_FOUR := [
-	["你爸去了城裡工作。你姑姑去了新加坡。", "Your dad went to work in the city. Your aunt went to Singapore."],
-	["你叔叔也搬走了。四十五歲那年，家裡就剩我一個。", "Then your uncle moved out. By forty-five, I was the only one here."],
-	["我把收音機開著。有一天我才發現，我已經好幾天沒開口了。", "I left the radio on. One day I realized I hadn’t spoken a word in days."],
-	["那年我四十六歲。我去找了一個人，問他能不能把你阿公請回來。", "I was forty-six. I went to see a man and asked if he could bring your Ah Gong home."],
-	["他說，要先讓我看得見。後來，只有我看得見你阿公。", "He said he’d have to let me see first. Afterward, I was the only one who could see your grandfather."],
-	["有時候他坐在沙發上，陪我摺衣服。我跟他講你們寄來的信。", "Sometimes he sat beside me while I folded the washing. I’d tell him what was in your letters."],
-	["有一回，他笑到咳嗽。我差一點就起來幫他倒水。", "Once he laughed until he coughed. I almost got up to pour him a glass of water."],
-	["我房裡的衣櫃，最下面收了一個罐子。你小時候，我把糖藏在同一個地方。", "I put a jar at the bottom of my wardrobe. Remember where I used to hide the sweets?"],
-	["把它搬到屋後的金爐旁邊。在屋裡，先別開蓋。", "Take it out to the burner. Keep the lid on while you’re inside."],
+	["你爸去城裡找工作，你姑姑去新加坡。", "Your dad went to the city for work. Your aunt went to Singapore."],
+	["你叔叔也搬了。我四十五歲那年，只剩我一個。", "Your uncle moved out too. I was forty-five, living here on my own."],
+	["有一天我把收音機關掉，才發現我好幾天沒跟人說話了。", "One day I turned off the radio. I hadn’t talked to anyone in days."],
+	["隔年，我去找了個師公。我問他能不能讓你阿公回來。", "The next year I went to see a ritual master. I asked if he could bring Grandpa back."],
+	["他教我開眼。阿公回來以後，只有我看得到。", "He taught me how to open my third eye. When Grandpa came back, only I could see him."],
+	["我摺衣服的時候，他就坐在旁邊。我會念你們寄來的信給他聽。", "He’d sit with me while I folded the washing. I’d read your letters to him."],
+	["有一次他笑到咳嗽。我都站起來要倒水了。", "Once he laughed so hard he coughed. I got up to get him water."],
+	["我衣櫃最下面有個罐子。以前糖就藏那裡。", "There’s a jar at the bottom of my wardrobe. Where I used to hide the sweets."],
+	["搬到屋後金爐旁邊。別在屋裡打開。", "Take it out to the burner. Don’t open it in the house."],
 ]
 const TAPE_FIVE := [
-	["你小時候問我，半夜在跟誰說話。我說阿嬤只是在拜拜。", "You asked me who I talked to at night. I told you I was just praying."],
-	["那個人說，你阿公受的苦已經完了。阿修羅、地獄，他都走過了。", "The man said your grandpa had finished suffering. He’d been through the Asura realm and through hell."],
-	["他本來要往天上去，再投胎。我偏要那個人把他叫回來。", "He was on his way to heaven and another life. I asked the man to call him back anyway."],
-	["回來的時候，他很餓。我煮的東西，他連碰都碰不到。", "He came back hungry. He couldn’t even touch the food I cooked."],
-	["以前我跟你說，我去醫院是去檢查。你還把糖塞進我的包包。", "I used to tell you I was going to the hospital for a checkup. You’d slip a sweet into my bag."],
-	["我是去拿那些沒能出生的孩子的遺體。你在罐子裡看到的，就是他們。", "I went for the remains of babies who never got to be born. That’s what you saw in the jar."],
-	["我每天晚上燒。有幾年我還在數。後來數到幾千，就不敢再數了。", "I burned them every night. For years I kept count. I’d reached the thousands when I stopped counting."],
-	["火熄了，他就吞那些孩子的魂。逃掉的，就躲在屋裡。", "Once the fire went out, he swallowed their souls. The ones who slipped past him hid in the house."],
-	["有時我聽到小孩跑過走廊。你阿公一靠近，聲音就停了。", "Sometimes I heard children running in the hall. Whenever your grandpa came close, it went quiet."],
-	["到後來，他一開口，有時候是小孩子的聲音。", "By the end, he sometimes spoke in a child’s voice."],
-	["最近，燒了也沒用。昨晚我去浴室，想把水龍頭關緊。", "Lately it hasn’t been enough. Last night I went into the bathroom to turn the tap off."],
-	["我本來想轉身出去。手卻自己伸了出去。", "I meant to turn and leave. My hands reached out on their own."],
-	["我先叫你點香、倒茶。那些事你都熟。我怕一開始就講，你會直接走。", "I started with incense and tea because you knew how. I thought you’d leave if I told you everything at once."],
-	["", "She looked at the empty cushion. For a while she didn’t say anything."],
-	["到浴室去看看水井。你要是還願意留下，去我梳妝台拿那個小鐵盒。", "Look at the well. If you still want to stay, there’s a little tin on my dresser."],
-	["在祖先桌前，把裡面的白粉抹一點在眉心。就像那個人當初教我的。", "At the ancestor altar, put a little of the white powder between your eyebrows. That’s how the man taught me to see."],
-	["做完了，就把金紙放在罐子旁邊，一起燒掉。火熄了再進來。", "After that, put the paper beside the jar and burn them together. Come in once the fire goes out."],
+	["你小時候問我，半夜在跟誰說話。我騙你說我在拜拜。歹勢啦。", "You asked who I was talking to that night. I said I was praying. I’m sorry."],
+	["師公說，阿修羅、地獄，你阿公都熬過去了。", "The master said Grandpa had already made it through the Asura realm and hell."],
+	["他本來要上天，再去投胎。是我硬把他叫了回來。", "He was meant to go on to heaven and be reborn. I made him come back."],
+	["他回來就一直餓。我煮的飯，他一口也吃不了。", "He was always hungry. He couldn’t eat a bite of my cooking."],
+	["你還記得我說要去醫院檢查嗎？", "Remember when I said I was going to the hospital for checkups?"],
+	["罐子裡是那些沒能出生的孩子。我是去帶他們回來。", "The jar has the babies who died before they were born. That’s what I went to the hospital for."],
+	["我每晚都燒。後來幾千個了，我就不敢數了。", "I burned them every night. I stopped counting after a few thousand."],
+	["火一熄，他就吃他們的魂。跑掉的還躲在屋裡。", "When the fire went out, he ate their souls. The ones that got away still hide in the house."],
+	["他一過來，走廊裡那些小孩就不敢出聲。", "Whenever he came close, the children in the hall went quiet."],
+	["有一次我聽到小孩在叫我。回頭一看，是你阿公。", "Once I heard a child call me. I turned around. It was Grandpa."],
+	["現在燒了也沒用。昨晚我去浴室關水。", "Burning them doesn’t work anymore. Last night I went to turn off the tap."],
+	["我想出去。我的手不聽我的。", "I tried to leave. My hands wouldn’t do what I wanted."],
+	["我先叫你點香、倒茶。我怕你一聽完，就不肯留下。", "I asked you to light incense and pour tea first. I thought you’d leave if I told you."],
+	["", "She looked at the empty seat."],
+	["你先去看井。還肯留下的話，梳妝台上有個鐵盒。", "Go look at the well. If you’re staying, there’s a tin on my dresser."],
+	["在祖先桌前，抹一點白粉在眉心。師公那時就是這樣教我的。", "At the ancestor altar, put a little white powder between your eyebrows. That’s how he taught me to see."],
+	["再把金紙跟罐子一起燒。等火熄了再進來。", "Burn the joss paper with the jar. Come in when the fire goes out."],
 ]
 
 const TAPE_SIX := [
-	["火熄了嗎？你可以坐一下了。坐阿嬤平常坐的地方。", "Has the fire gone out? You can sit down now. Where Ah Ma used to sit."],
-	["你爸不知道這些。他有問過。是我每次都跟他說沒事。", "Your dad never knew. He used to ask. I always told him I was fine."],
-	["我以前叫你怕就來找我。這一次，換我來找你。", "I used to tell you to come get me if you were scared. This time I’ll come to you."],
-	["先把眼睛閉起來。想睜開的時候，再睜開。", "Close your eyes first. Open them when you’re ready."],
-	["阿嬤在這裡。", "Ah Ma is here."],
+	["火熄了嗎？去坐阿嬤平常坐的地方。", "Fire out? Come sit where I used to sit."],
+	["你爸不知道。他問過，我都跟他說沒事。", "Your dad used to ask if I was all right. I always said yes."],
+	["以前你怕了，就來找我。這次換我來找你。", "You used to come get me when you were scared. I’ll come to you this time."],
+	["先閉上眼睛。準備好了再張開。", "Close your eyes. Open them when you’re ready."],
+	["阿嬤在這裡。", "I’m right here."],
 ]
 const TAPES := [TAPE_ONE, TAPE_TWO, TAPE_THREE, TAPE_FOUR, TAPE_FIVE, TAPE_SIX]
 const FINAL_CARD := "阿嬤\n在這裡"
@@ -198,105 +198,105 @@ const INSTRUCTIONS := [
 ]
 
 const WARDROBE_SHELF := [
-	"The lowest shelf barely took up half the depth of the cupboard. The front edge had a narrow seam all the way across.",
-	"I used to wait for her to leave the room so I could take a sweet. They were never in any of the tins.",
+	"The shelf’s too shallow. There’s a seam along the front.",
+	"I never could find where she hid the sweets.",
 ]
-const WARDROBE_TAB := ["The bit of red cloth wasn’t caught in the seam. Someone had nailed it there so it could be pulled."]
-const WARDROBE_RAISED := ["A pocket of cold air came out from under the board. Ah Ma had made room for two things."]
+const WARDROBE_TAB := ["The red cloth is nailed in. It’s a pull tab."]
+const WARDROBE_RAISED := ["There’s a space under the shelf."]
 const HOSPITAL_SLIPS := [
-	"A stack of receipts, the paper thinner toward the bottom. They all had Ah Ma’s name on them in the same careful handwriting.",
-	"Some were old enough that the print had gone pale. One had the mark I’d left stamping a wet ring on it with my glass.",
-	"She used to slip the receipts into her bag when I asked how the checkup went. She always said the same thing. Everything’s fine.",
+	"Ah Ma’s name is on all these hospital slips.",
+	"This one’s from when I was little.",
+	"She always said the checkup went fine.",
 ]
 const VESSEL_FOUND := [
-	"I reached down for the clay figure. I could see the seam where its lid fitted into the base.",
+	"It’s shaped like a baby. The seam goes all the way around.",
 ]
-const VESSEL_PLACED := ["I had to lower it with both hands. The sound it made was heavier than the jar looked."]
+const VESSEL_PLACED := ["God, that smells."]
 const VESSEL_INSIDE := [
-	"The lid scraped halfway open. Under it were rolls of cloth, packed tightly enough to hold their shape.",
-	"I thought the smallest one was just a corner of the wrapping. When the cloth moved, I let the lid fall back.",
-	"From the kitchen I could see the television’s reflection in the hall window. The next part of the tape was still waiting.",
+	"There’s something wrapped up inside.",
+	"One of them moved.",
+	"I need to see what’s on the rest of the tape.",
 ]
-const WELL_BEFORE_RECONSTRUCTION := "The tap was still dripping. A pale scrape ran across the rim where the rope touched it."
+const WELL_BEFORE_RECONSTRUCTION := "The tap’s still dripping. The rope’s pulled tight."
 const WELL_RECONSTRUCTION := [
-	"Dad said they’d found her here. I’d pictured her by the sink with the tap still running.",
-	"The rope rubbed a groove in the concrete. From this side, I could see where somebody had tried to hold on.",
-	"I thought about her hands moving without her. Then I heard the bucket go down.",
+	"Dad said they found her in here. I thought he meant by the sink.",
+	"Someone had tried to hold on.",
+	"I heard the bucket drop.",
 ]
 const BACK_FROM_WELL := [
-	"The rope hung still. When Dad said they’d found her in here, I’d never thought to ask how far down.",
-	"I had my keys in my pocket. I held them there for a moment, then went to fetch the tin.",
+	"The rope wasn’t moving anymore.",
+	"I could still leave. The keys were in my pocket.",
 ]
-const CHALK_FOUND := ["Most of it had turned to powder. One white corner was left, polished smooth where her thumb used to go."]
+const CHALK_FOUND := ["There’s a little piece of chalk left under all that powder."]
 const FOREHEAD_MARK := [
-	"The powder felt cold between my eyebrows. I could see the white of it on my fingers.",
-	"I kept my eyes on the photograph. For a moment, the words from behind my bedroom door sounded close enough to answer.",
-	"The smoke was still rising. I set the tin down and went for the burner before I could change my mind.",
+	"Cold. I can still feel it between my eyes.",
+	"For a second, I heard the chanting from when I was a kid.",
+	"I should get back to the burner.",
 ]
 const FIRE_BEATS := [
-	"The edge of the paper caught first. It lifted and curled over the rim of the vessel.",
-	"I watched until the paper stopped moving. Usually, when rain stopped out here, the insects started up again.",
-	"The fire sank below the opening. The kitchen, the eaves, and the trees beyond them had all gone quiet.",
+	"The paper caught first.",
+	"I stood back and waited.",
+	"The rain had stopped. Where were the insects?",
 ]
 const HALL_AFTER_BURN := [
-	"The incense was still burning. The cups were right where I’d left them.",
-	"I stood there long enough to think it had worked.",
+	"The incense was still lit.",
+	"I thought it had worked.",
 ]
 const SIT_DOWN := [
-	"I sat where her weight had pressed the cushion flat. The lace slipped down the back of the couch.",
-	"From there I could see where she used to stand and wait for me to put my shoes on before we left.",
-	"Dad said to tell her I was home. I’d said it in the car. It was harder to say now.",
+	"I sat in Ah Ma’s spot.",
+	"She used to wait right there while I put my shoes on.",
+	"Ah Ma? I’m still here.",
 ]
 const BEDROOM_ECHO := [
-	"I’d left the door open when I came in. Now the latch was down.",
-	"I’d forgotten how low I used to get to see the light.",
-	"Something ran towards the bed. Every step was on my side of the door.",
-	"I kept my feet on the floor. I was afraid it would hear me lift them.",
+	"I left that door open.",
+	"That’s the same red light.",
+	"The footsteps were on my side this time.",
+	"I stayed very still.",
 ]
 const RECEIPT_BACK := [
-	"On the other side, in Ah Ma’s pencil, there were two sentences.",
-	"“You called me from the bedroom three nights running. The last time, you were already in my arms.”",
-	"I tried to remember what she’d said to me at breakfast that last morning.",
+	"Ah Ma wrote something on the back.",
+	"‘You called me from the bedroom again. You were already in my arms.’",
+	"I don’t remember calling her.",
 ]
-const FINAL_LINE := "She reached for me. The chain went tight before her fingers got to mine."
+const FINAL_LINE := "I couldn’t reach her."
 const AFTERMATH := [
-	"Dad wanted me to call in the morning. I kept wondering what I’d say when he asked if I’d said goodbye.",
+	"Dad said to call him in the morning. What am I supposed to tell him?",
 ]
 
 
 const OFFERING_ITEMS := {
-	&"cups": ["Three cups", "Three little cups nested together. There’s a chip where Ah Ma used to catch the bottom one with her thumbnail.", "I slipped my fingers between the cups so they wouldn’t knock together."],
-	&"tea": ["Tea jar", "A lidded jar of tea. The lid stuck a little where the tea had dried around its lip.", "The old lid shifted when I lifted it. It smelled like the tea she kept warm all day."],
-	&"wine": ["Rice wine", "A brown bottle of rice wine, the kind she kept for the altar.", "I put the stopper back in before I took the bottle."],
-	&"paper": ["Joss paper", "A stack of folded joss paper. She’d tucked the corners in so the drafts wouldn’t lift them.", "I tucked the packet away, still folded."],
+	&"cups": ["Three cups", "Three small cups. One has a chipped rim.", "I took all three."],
+	&"tea": ["Tea jar", "The jar Ah Ma used for tea.", "It still smells like her tea."],
+	&"wine": ["Rice wine", "Ah Ma kept it for the altar.", "I put the stopper back in."],
+	&"paper": ["Joss paper", "A stack of folded joss paper.", "I’ll need this at the burner."],
 }
 
-const CUPS_PLACED := "Ah Ma used to line the cups up with the front edge of the table. I straightened the middle one."
-const TEA_POURED := "I poured tea into the two outer cups. Ah Ma always left a little room at the top."
-const WINE_POURED := "A thin line of wine ran down the bottle. I wiped it with my thumb."
+const CUPS_PLACED := "Three cups. Just like she showed me."
+const TEA_POURED := "Tea in the two outside cups."
+const WINE_POURED := "Wine in the middle."
 const FIRST_BURNER := [
-	"The lid had left a black ring on the rim. I could turn it a little before it caught.",
-	"Back when I could barely see over it, Ah Ma used to tell me to stand upwind. I couldn’t remember her ever saying what made this one stink.",
+	"There’s a black ring under the lid.",
+	"She used to tell me to stand upwind.",
 ]
 const FIRST_WELL := [
-	"Ah Ma used to lower a bucket here. On hot days the first water out was always cold enough to hurt your teeth.",
-	"I rested my hand on the concrete. The rope was pulled tight. I couldn’t see where it ended.",
+	"Ah Ma used to bring up cold water on hot days.",
+	"The rope’s tight. I can’t see the bucket.",
 ]
 
-const PORTRAIT_ARRIVAL := "I found him behind the bowls. Looking at him up close, I thought he could have been a man my own age."
-const PORTRAIT_NOTE := "Ah Ma had written on the back. “Sick for months. He went peacefully.”"
+const PORTRAIT_ARRIVAL := "He looks about my age."
+const PORTRAIT_NOTE := "Ah Ma wrote ‘Sick for months. He went peacefully.’"
 const PORTRAIT_PLACED := [
-	"I opened the stand, and the frame leaned back the way it had on the shelf.",
-	"In all the other pictures on the table, there was a wedding or a birthday or a yard full of people. In this one he was alone.",
-	"I tried to see Dad in his face. From the side, with the smoke in front of the glass, I could.",
+	"There he is.",
+	"I don’t think I’ve ever seen a picture of him with Dad.",
+	"He looks a bit like Dad from this side.",
 ]
 
 
-const INCENSE_BUNDLE := "The bundle was tied with a bit of cotton thread. Ah Ma always saved the thread from the rice sacks."
+const INCENSE_BUNDLE := "She tied the incense with thread from the rice bag."
 const INCENSE_LIT := [
-	"I held the match under the sticks until each tip held a little orange light.",
-	"The smell took me back to mornings when she’d open the house before anyone else was up.",
-	"The sitting room was dark. Ah Ma used to sit at the far end of the couch, with a cushion laid flat beside her.",
-	"Once, I asked if I could sit there. She moved the cushion. Then she looked at the empty spot a moment before she let me climb up.",
-	"On the tape she’d looked to that same side. I wanted to see the rest.",
+	"The sticks caught.",
+	"The house used to smell like this in the morning.",
+	"She always left a cushion beside her on the couch.",
+	"One time she looked at it before she let me sit down.",
+	"She looked the same way on the tape. I want to see the rest.",
 ]
