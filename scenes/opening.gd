@@ -34,7 +34,7 @@ const POUR := preload("res://assets/audio/short-pour.wav")
 const GIGGLE := preload("res://assets/audio/distant-giggle.wav")
 const WOOD_RUN := preload("res://assets/audio/wood-run.wav")
 const FAR_DOOR_SLAM := preload("res://assets/audio/far-door-slam.wav")
-const WELL_SWELL := preload("res://assets/audio/well-swell.wav")
+const FIRST_WELL_SOUND := preload("res://assets/audio/first-well-water.wav")
 const BURNER_SUSPENSE := preload("res://assets/audio/burner-suspense.wav")
 const BOARD_LIFT := preload("res://assets/audio/wardrobe-board.wav")
 const VESSEL_SET := preload("res://assets/audio/vessel-set.wav")
@@ -58,9 +58,12 @@ const REVEAL_STARE := preload("res://assets/finale/doorway-stare.jpg")
 const TV_SEATED := preload("res://assets/ritual/crt-seated.jpg")
 const REVEAL_FADE := 0.65
 const REVEAL_SILENCE := 1.5
-const FINAL_LINE_HOLD := 2.6
+const FINAL_LINE_HOLD := 3.2
 const OUTRO_BLACK_HOLD := 1.2
-const WATCHER := preload("res://assets/finale/passage-watcher.png")
+const PEEK_WATCHER := preload("res://assets/finale/watcher-peek.png")
+const STANDING_WATCHER := preload("res://assets/finale/watcher-standing.png")
+const WATCHER_HOLD := 1.65
+const PEEK_WATCHER_HOLD := 0.78
 const CUP_NAMES := ["Left cup", "Middle cup", "Right cup"]
 
 const OBJECTIVES := {
@@ -246,6 +249,7 @@ const INSPECTION_IMAGES := {
 @onready var opening_title: Control = %OpeningTitle
 @onready var story: Control = %Story
 @onready var textbox: Control = %Textbox
+@onready var narration_baseline := textbox.position.y
 @onready var caption: Label = %Caption
 @onready var original_caption: Label = %OriginalCaption
 @onready var speaker: Label = %Speaker
@@ -277,6 +281,9 @@ const INSPECTION_IMAGES := {
 @onready var pour_sound: AudioStreamPlayer = %PourSound
 @onready var scare_sound: AudioStreamPlayer = %ScareSound
 @onready var memory_percussion: AudioStreamPlayer = %MemoryPercussion
+@onready var ui_hover: AudioStreamPlayer = %UIHover
+@onready var ui_select: AudioStreamPlayer = %UISelect
+@onready var ui_open: AudioStreamPlayer = %UIOpen
 @onready var audio_players: Array[AudioStreamPlayer] = [
 	room_tone, settle, music, engine, car_exit, wood_door, rain, chant, pickup,
 	rural_night, water_drip, page_turn, concrete_steps, cough, tape_sound, match_strike, phone_ring, pour_sound, scare_sound, memory_percussion,
@@ -329,6 +336,7 @@ var seen_arrivals: Array[Screen] = []
 var confession_resume_pending := false
 var first_watcher_seen := false
 var passing_watcher_seen := false
+var watcher_tween: Tween
 var wardrobe_pressure_started := false
 var shelf_wedge_found := false
 var matches_found := false
@@ -336,12 +344,17 @@ var tea_cups := 0
 var credits_roll: Tween
 var action_underline_width := 0.0
 var audio_fade: Tween
+var overlay_fade: Tween
 var rain_stopped := false
 var arriving := false
 var blackout := false
 
 
 func _ready() -> void:
+	ui_open.stream = preload("res://assets/audio/menu-open.wav")
+	ui_hover.stream = preload("res://assets/audio/menu-hover.wav")
+	ui_select.stream = preload("res://assets/audio/menu-select.wav")
+	_connect_ui_sounds()
 	%Begin.pressed.connect(_show_screen.bind(Screen.INTRO))
 	%Quit.pressed.connect(get_tree().quit)
 	%TitleSettings.pressed.connect(_show_panel.bind(Overlay.SETTINGS, %TitleSettings))
@@ -368,12 +381,39 @@ func _ready() -> void:
 	picture.set_shader_parameter("offering_wine", inventory.OFFERING_ICONS[&"wine"])
 	picture.set_shader_parameter("offering_paper", inventory.OFFERING_ICONS[&"paper"])
 	picture.set_shader_parameter("late_vessel", VESSEL)
-	picture.set_shader_parameter("watcher", WATCHER)
 	picture.set_shader_parameter("reveal_stare", REVEAL_STARE)
 	memory_percussion.stream = preload("res://assets/audio/yard-percussion.wav")
 	music.play()
 	_enter_screen(Screen.TITLE)
 	%Begin.grab_focus()
+
+
+func _connect_ui_sounds() -> void:
+	for menu: Control in [opening_title, options, inventory]:
+		for button: BaseButton in menu.find_children("*", "BaseButton", true, false):
+			button.mouse_entered.connect(_play_ui_hover.bind(button))
+			if button != %TitleSettings:
+				button.pressed.connect(_play_ui_select)
+	for button: BaseButton in [%Pause, %InventoryButton]:
+		button.mouse_entered.connect(_play_ui_hover.bind(button))
+	for button: BaseButton in [action, turn_page, %AdvanceBackdrop, %TapeDeck, %TapeBack, %TapeEarlier, %TapeLater]:
+		button.pressed.connect(_play_ui_select)
+	for slider: Slider in options.get_node("VolumeControls").find_children("*", "Slider", true, false):
+		slider.mouse_entered.connect(_play_ui_hover.bind(slider))
+		slider.drag_started.connect(_play_ui_select)
+
+
+func _play_ui_hover(control: Control) -> void:
+	if blackout or not control.is_visible_in_tree():
+		return
+	if control is BaseButton and control.disabled:
+		return
+	ui_hover.play()
+
+
+func _play_ui_select() -> void:
+	if not blackout and screen not in [Screen.LISTEN, Screen.REVEAL]:
+		ui_select.play()
 
 
 func _process(delta: float) -> void:
@@ -478,7 +518,7 @@ func _advance(perform_action := false) -> void:
 		narration_index += 1
 		if narration_index < lines.size():
 			_show_story_beat(lines[narration_index])
-			if screen == Screen.MEMORY and narration_index == 5:
+			if screen == Screen.MEMORY and narration_index == 2:
 				_start_chant()
 			elif screen in [Screen.MEMORY, Screen.PEEK] and chant.playing:
 				_show_sound_cue("Muffled chanting behind the door")
@@ -578,8 +618,8 @@ func _show_screen(next: Screen) -> void:
 	else:
 		if screen == Screen.HALL and next == Screen.KITCHEN and stage == Stage.TAKE_VESSEL and not passing_watcher_seen:
 			passing_watcher_seen = true
-			_show_watcher(Vector4(0.862, 0.187, 0.065, 0.215), 0.86)
-			fade.tween_interval(0.20)
+			_show_watcher(STANDING_WATCHER, Vector4(0.879, 0.146, 0.087, 0.561))
+			fade.tween_interval(WATCHER_HOLD)
 		fade.tween_property(%SceneCurtain, "color:a", 1.0, 0.23)
 	if next == Screen.LISTEN:
 		fade.tween_callback(_play_scare.bind(GRANDPA_LAUGH, -5.0, "A laugh to your left"))
@@ -607,6 +647,8 @@ func _enter_screen(next: Screen) -> void:
 	if next not in [Screen.LISTEN, Screen.REVEAL]:
 		_stop_scare()
 	memory_percussion.stop()
+	if watcher_tween and watcher_tween.is_valid():
+		watcher_tween.kill()
 	picture.set_shader_parameter("watcher_strength", 0.0)
 	picture.set_shader_parameter("reveal_grandpa", 0.0)
 	picture.set_shader_parameter("reveal_ah_ma", 0.0)
@@ -684,6 +726,7 @@ func _enter_screen(next: Screen) -> void:
 	opening_title.visible = on_title
 	menu_signal.visible = on_title
 	story.visible = not on_title and not on_intro
+	textbox.position.y = narration_baseline + (54.0 if screen == Screen.REVEAL else 0.0)
 	%Intro.visible = on_intro
 	if on_intro:
 		_update_intro(0.0)
@@ -773,7 +816,7 @@ func _start_final_gaze() -> void:
 
 
 func _show_final_line() -> void:
-	_set_line(StoryText.FINAL_LINE, "Grandpa?")
+	_set_line(StoryText.FINAL_LINE, "Grandpa?", "", StoryText.FINAL_LINE_CHINESE)
 	_finish_text_reveal()
 
 
@@ -994,8 +1037,7 @@ func _show_exploration() -> void:
 	if screen == Screen.HALL:
 		if stage == Stage.RETURN_TO_TAPE and not first_watcher_seen:
 			first_watcher_seen = true
-			_show_watcher(Vector4(0.884, 0.187, 0.044, 0.135), 1.0)
-			_play_scare(WRIST_CHAIN, -16.0, "A click in the doorway")
+			_show_watcher(PEEK_WATCHER, Vector4(0.911, 0.225, 0.055, 0.245), 0.18)
 		if stage == Stage.PREPARE_OFFERINGS and _cups_placed():
 			for cup in CUP_NAMES.size():
 				var area := Rect2(387 + cup * 57, 343, 49, 53)
@@ -1013,6 +1055,7 @@ func _add_hotspot(label: String, area: Rect2, activate: Callable) -> Button:
 	hotspot.size = area.size
 	hotspot.accessibility_name = label
 	hotspot.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	hotspot.pressed.connect(_play_ui_select)
 	var empty := StyleBoxEmpty.new()
 	for state in [&"normal", &"hover", &"pressed", &"focus"]:
 		hotspot.add_theme_stylebox_override(state, empty)
@@ -1027,12 +1070,21 @@ func _look_back_at_doorway() -> void:
 	_show_screen(Screen.BEDROOM_ECHO)
 
 
-func _show_watcher(area: Vector4, strength: float) -> void:
+func _show_watcher(texture: Texture2D, area: Vector4, delay := 0.0) -> void:
+	if watcher_tween and watcher_tween.is_valid():
+		watcher_tween.kill()
+	var peeking := texture == PEEK_WATCHER
+	var opacity := 0.68 if peeking else 1.0
+	picture.set_shader_parameter("watcher", texture)
 	picture.set_shader_parameter("watcher_area", area)
-	picture.set_shader_parameter("watcher_strength", strength)
-	var glimpse := create_tween()
-	glimpse.tween_interval(0.28)
-	glimpse.tween_callback(picture.set_shader_parameter.bind("watcher_strength", 0.0))
+	picture.set_shader_parameter("watcher_bottom_fade", 0.62 if peeking else 0.91)
+	picture.set_shader_parameter("watcher_strength", opacity if is_zero_approx(delay) else 0.0)
+	watcher_tween = create_tween()
+	if delay > 0.0:
+		watcher_tween.tween_interval(delay)
+		watcher_tween.tween_callback(picture.set_shader_parameter.bind("watcher_strength", opacity))
+	watcher_tween.tween_interval(PEEK_WATCHER_HOLD if peeking else WATCHER_HOLD)
+	watcher_tween.tween_callback(picture.set_shader_parameter.bind("watcher_strength", 0.0))
 
 
 
@@ -1179,7 +1231,7 @@ func _prepare_inspection(item: String) -> String:
 		elif item == "Well" and not well_checked:
 			well_checked = true
 			inspection_lines = StoryText.FIRST_WELL.duplicate()
-			_queue_scare(WELL_SWELL, -14.0, "A low sound from inside the well", 0.86)
+			_queue_scare(FIRST_WELL_SOUND, -9.0, "", 0.72)
 			_check_offerings_complete()
 	if item == "Photo album and note" and stage >= Stage.NOTE:
 		reading_note = true
@@ -1481,6 +1533,7 @@ func _queue_scare(stream: AudioStream, level: float, cue: String, delay: float) 
 
 
 func _play_scare(stream: AudioStream, level: float, cue: String) -> void:
+	_clear_scare_caption()
 	scare_caption = cue
 	scare_sound.stream = stream
 	scare_sound.volume_db = level
@@ -1505,10 +1558,16 @@ func _stop_scare() -> void:
 
 func _apply_room_state() -> void:
 	var hall := screen == Screen.HALL
-	var house := INSPECTIONS.has(screen) or screen in [Screen.TAPE, Screen.VESSEL_OPEN, Screen.MARKED, Screen.BURNING]
+	var house := (INSPECTIONS.has(screen) and screen != Screen.YARD) or screen in [
+		Screen.TAPE, Screen.VESSEL_OPEN, Screen.MARKED, Screen.BURNING, Screen.LISTEN, Screen.BEDROOM_ECHO,
+	]
 	var dread := 0.0
 	if house:
-		dread = 0.32 if stage < Stage.RETURN_TO_TAPE else 0.54 if stage < Stage.TAKE_VESSEL else 0.84
+		dread = 0.49 if stage < Stage.RETURN_TO_TAPE else 0.69 if stage < Stage.TAKE_VESSEL else 0.92
+	elif screen in [Screen.YARD, Screen.MEMORY, Screen.PEEK]:
+		dread = 0.29
+	elif screen in [Screen.TITLE, Screen.DRIVE, Screen.REVEAL]:
+		dread = 0.18
 	picture.set_shader_parameter("house_dread", dread)
 	picture.set_shader_parameter("reveal_glitch", screen == Screen.REVEAL)
 	picture.set_shader_parameter("vessel_location", 1 if screen == Screen.WARDROBE and shelf_lifted and not _vessel_taken()
@@ -1851,6 +1910,9 @@ func _set_inspection_zoom(point: Vector2, amount: float, immediate := false, clo
 
 
 func _show_panel(next: Overlay, opener: Control) -> void:
+	var from_instruction := panel == Overlay.INSTRUCTION
+	if not from_instruction:
+		ui_open.play()
 	overlay_opener = opener
 	panel = next
 	if inspection_tween and inspection_tween.is_running():
@@ -1863,6 +1925,7 @@ func _show_panel(next: Overlay, opener: Control) -> void:
 	if next == Overlay.INVENTORY:
 		inventory.show()
 		inventory.present(collected_items, held_item)
+		_fade_in_overlay(inventory)
 		return
 	options_title.text = "Settings" if panel == Overlay.SETTINGS else "Paused"
 	%Resume.text = "‹ Back" if panel == Overlay.SETTINGS else "Resume"
@@ -1875,11 +1938,25 @@ func _show_panel(next: Overlay, opener: Control) -> void:
 	if next == Overlay.PAUSE:
 		_set_audio_paused(true)
 	options.show()
+	if not from_instruction:
+		_fade_in_overlay(options)
 	%Resume.grab_focus()
 
 
+func _fade_in_overlay(control: Control) -> void:
+	if overlay_fade and overlay_fade.is_valid():
+		overlay_fade.kill()
+	control.modulate.a = 0.0
+	overlay_fade = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	overlay_fade.tween_property(control, "modulate:a", 1.0, 0.18)
+
+
 func _close_panel() -> void:
-	var was_paused := panel in [Overlay.PAUSE, Overlay.INSTRUCTION]
+	if panel == Overlay.INSTRUCTION:
+		_show_panel(Overlay.PAUSE, overlay_opener)
+		%ReplayInstruction.grab_focus()
+		return
+	var was_paused := panel == Overlay.PAUSE
 	panel = Overlay.NONE
 	options.hide()
 	inventory.hide()
@@ -1916,6 +1993,11 @@ func _review_instruction() -> void:
 
 
 func _set_audio_paused(paused: bool) -> void:
+	if watcher_tween and watcher_tween.is_valid():
+		if paused:
+			watcher_tween.pause()
+		else:
+			watcher_tween.play()
 	if scare_sequence and scare_sequence.is_valid():
 		if paused:
 			scare_sequence.pause()

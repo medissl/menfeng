@@ -29,9 +29,9 @@ const AFTER_CALL := [
 
 const YARD := [
 	"Does nobody take care of this house anymore?",
-	"She’d fixed the porch light with tape again.",
-	"It was only six. I could barely see where I’d parked.",
-	"I’ll sleep here. I can drive back in the morning.",
+	"The porch light was the only one on.",
+	"I could barely see the road through the trees.",
+	"I’ll stay here and leave in the morning.",
 ]
 
 const HALL := [
@@ -47,18 +47,14 @@ const BEDROOM_ARRIVAL := [
 ]
 
 const NIGHT_MEMORY := [
-	"I remembered the light under my door. I was small enough to get down flat on the floor.",
-	["Ah Ma", "Keep your slippers by the bed. The floor gets cold.", "拖鞋放床邊。晚上地板會冷。"],
-	["You, as a child", "Can you leave it open a bit?", "門可以留一點縫嗎？"],
-	["Ah Ma", "I’ll be right outside. Just call me.", "阿嬤就在外面。有事就叫我。"],
-	"I fell asleep. When I woke up, there was red light under the door.",
-	"I could hear Ah Ma talking.",
-	"I got out of bed to see who was there.",
+	"I’d fallen asleep at Ah Ma’s.",
+	"I woke up and saw red light under the door.",
+	"I could hear Ah Ma talking. I got up to see who was there.",
 ]
 
 const PEEK := [
 	"I could see Ah Ma’s slippers.",
-	"She stopped talking. Her feet turned. The other shadow stayed put.",
+	"There was a shadow beside her. It didn’t move when she turned.",
 	"I went back to bed. I didn’t sleep.",
 ]
 
@@ -68,14 +64,14 @@ const BREAKFAST := [
 	["Ah Ma", "Just praying.", "拜拜啦。"],
 	["You, as a child", "But I saw somebody.", "可是我有看到別人啊。"],
 	"She gave me the sweet potato from her bowl.",
-	["Ah Ma", "Next time you get scared, come get me. Eat before it gets cold.", "下次會怕就來找阿嬤。快吃，等一下就涼了。"],
+	["Ah Ma", "Eat up. It’s getting cold.", "快吃，等一下就涼了。"],
 ]
 
 const ANCESTORS := [
 	"Ah Ma, I’m home.",
 	"I’m sorry I missed your funeral.",
-	"I saw Dad’s name on my phone that last week. I thought I’d call him back after dinner.",
-	"I wish I’d heard you pick up one more time.",
+	"I kept telling myself I’d visit next week.",
+	"I didn’t get to say goodbye.",
 	"I wiped my eyes on my sleeve. Dad said she’d left me something in the sitting room.",
 ]
 
@@ -134,7 +130,7 @@ const TAPE_TWO := [
 ]
 
 const TAPE_THREE := [
-	["廚房有三個小杯子。你爸小時候老問，為什麼還要擺三杯。", "There are three cups in the kitchen. Your dad used to ask why we still set out three."],
+	["廚房有三個小杯子。", "There are three little cups in the kitchen."],
 	["茶跟米酒也在那裡。", "The tea and rice wine are there too."],
 	["杯子擺祖先桌上。你阿公喝米酒，我們喝茶。", "Set the cups at the ancestor altar. Grandpa drank rice wine. The rest of us had tea."],
 	["我把他那杯缺口朝前。你一看就知道是哪杯。", "I turn the chipped side of his cup toward us. You’ll know the one."],
@@ -154,7 +150,7 @@ const TAPE_FOUR := [
 	["搬到屋後金爐旁邊。別在屋裡打開。", "Take it out to the burner. Don’t open it in the house."],
 ]
 const TAPE_FIVE := [
-	["你出去的時候，去浴室看一下井。站遠一點，別把頭探進去。", "Have a look at the well before you go back out. Stay back from the rim."],
+	["再去看一眼浴室的井。站遠一點，別把頭探進去。", "Take another look at the well in the bathroom. Stay back from the rim."],
 	["我梳妝台上有個小鐵盒。裡面還有一點白粉。", "There’s a little tin on my dresser. There should be some white powder left."],
 	["到祖先桌前，抹一點在眉心。阿嬤以前也是這樣做的。", "At the ancestor altar, put a bit between your eyebrows. It’s what I used to do."],
 	["把金紙跟罐子一起燒。火熄了就進來。", "Burn the joss paper with the jar. Come in when the fire’s out."],
@@ -186,10 +182,10 @@ const TAPE_SIX := [
 	["你還記得我說要去醫院檢查嗎？", "Remember when I said I was going to the hospital for checkups?"],
 	["罐子裡是那些沒能出生的孩子。我是去帶他們回來。", "The jar held the babies who died before they were born. That’s what I went to the hospital for."],
 	["我每晚都燒。後來幾千個了，我就不敢數了。", "I burned them every night. I stopped counting after a few thousand."],
-	["火一熄，他就吃他們的魂。跑掉的還躲在屋裡。", "When the fire went out, he ate their souls. The ones that got away still hide in the house."],
-	["有一次我聽到小孩在叫我。回頭一看，是你阿公。", "Once I heard a child call me. I turned around. It was Grandpa."],
-	["三十多年了，我以為還壓得住他。現在那個東西，我也不知道要怎麼叫他。", "For thirty years I thought I could hold him down. I don’t know what to call him anymore."],
-	["昨晚我去關水，手又去摸井邊。我知道總有一天會下去。", "Last night I went to turn off the tap. My hands went to the rim again. I know where I’ll end up."],
+	["他吃那些孩子的魂。沒被他抓到的，就躲在屋裡。", "He fed on their spirits. The ones he didn’t catch hid in the house."],
+	["後來他一開口，有時候是那些孩子的聲音。", "After a while, he started talking in their voices."],
+	["我這樣撐了三十多年。到後來，我都快認不出他了。", "It worked for over thirty years. By the end, I barely recognized him."],
+	["有時候我醒來，人已經在浴室，手還扶著井邊。我根本不記得自己下過床。", "Sometimes I’d wake up in the bathroom with my hands on the well. I didn’t remember getting out of bed."],
 	["我怕你一聽完就走了。所以我才先叫你點香、倒茶。", "I thought you’d leave if I told you. That’s why I started with the incense and tea."],
 	["你眉心那點白粉，就是他們當初幫我開眼用的。", "That powder between your eyebrows is what they used to open my third eye."],
 	["阿嬤只想再見他一面。怎麼會變成這樣。", "I only wanted to see him again. How did it get this bad?"],
@@ -226,9 +222,9 @@ const VESSEL_INSIDE := [
 	"I need to see what’s on the rest of the tape.",
 ]
 const WELL_TRACE := [
-	"Dad said they found her in the well. I’d never come in here to look.",
+	"Dad said they found her here. I didn’t let myself think about it the first time.",
 	"There are two fresh scrapes on the inside of the rim. One stops where the concrete broke off.",
-	"I wish I knew who’d taken her hands off it.",
+	"I had to step back.",
 ]
 
 const CHALK_FOUND := ["There’s a little piece of chalk left under all that powder."]
@@ -259,11 +255,13 @@ const BEDROOM_ECHO := [
 
 const RECEIPT_BACK := [
 	"Ah Ma wrote something on the back.",
-	"‘You called me from the bedroom again. You were already in my arms.’",
+	"‘You called me from the bedroom three nights in a row.’",
+	"‘The last night, I was already holding you.’",
 	"I don’t remember calling her.",
 ]
 
 const FINAL_LINE := "You can see us."
+const FINAL_LINE_CHINESE := "你看得到我們。"
 
 const OFFERING_ITEMS := {
 	&"cups": ["Three cups", "Three small cups. One has a chipped rim.", "I took all three."],

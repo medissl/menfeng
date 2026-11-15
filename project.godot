@@ -11,16 +11,19 @@ config_version=5
 [application]
 
 config/name="門縫"
-run/main_scene="res://scenes/opening.tscn"
+config/version="1.0.0"
+run/main_scene="res://scenes/startup.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
-config/icon="res://icon.svg"
+boot_splash/bg_color=Color(0.0352941, 0.0431373, 0.0509804, 1)
+boot_splash/show_image=false
+config/icon="res://assets/branding/menfeng.png"
+config/windows_native_icon="res://assets/branding/menfeng.ico"
 
 [display]
 
 window/size/viewport_width=1280
 window/size/viewport_height=720
 window/stretch/mode="canvas_items"
-window/stretch/aspect="keep"
 
 [physics]
 

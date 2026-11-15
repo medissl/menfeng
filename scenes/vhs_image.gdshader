@@ -42,6 +42,7 @@ uniform float reveal_ah_ma = 0.0;
 uniform sampler2D watcher : source_color, filter_linear;
 uniform vec4 watcher_area = vec4(0.0, 0.0, 1.0, 1.0);
 uniform float watcher_strength = 0.0;
+uniform float watcher_bottom_fade = 0.91;
 
 vec3 add_vessel(vec3 room, vec2 uv) {
 	vec2 origin = vessel_location == 1 ? vec2(0.569, 0.314) : vec2(0.231, 0.662);
@@ -194,7 +195,9 @@ vec3 sample_room(vec3 room, vec2 uv) {
 		vec2 watcher_uv = (uv - watcher_area.xy) / watcher_area.zw;
 		if (all(greaterThanEqual(watcher_uv, vec2(0.0))) && all(lessThanEqual(watcher_uv, vec2(1.0)))) {
 			vec4 figure = texture(watcher, watcher_uv);
-			room = mix(room, figure.rgb * vec3(0.56, 0.49, 0.43), smoothstep(0.35, 0.9, figure.a) * watcher_strength);
+			float shadow = 1.0 - smoothstep(watcher_bottom_fade, 1.0, watcher_uv.y);
+			float opacity = smoothstep(0.22, 0.80, figure.a) * watcher_strength * shadow;
+			room = mix(room, figure.rgb * vec3(0.74, 0.67, 0.61), opacity);
 		}
 	}
 	return room;
@@ -268,7 +271,7 @@ void fragment() {
 	float shadow = (1.0 - smoothstep(0.035, 0.19, abs(uv.x - shadow_x))) * exp(-dip_time * dip_time);
 	picture *= 1.0 - unease * red_light * shadow * 0.72;
 	float dark_mask = 1.0 - smoothstep(0.09, 0.46, luminance);
-	picture *= 1.0 - house_dread * (0.13 + 0.13 * dark_mask);
+	picture *= 1.0 - house_dread * (0.16 + 0.24 * dark_mask);
 	picture.rb += (left.rb - right.rb) * slip * 0.12;
 
 	float grain_frame = mod(floor(scene_time * 10.0), 256.0);
