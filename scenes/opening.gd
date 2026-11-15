@@ -773,7 +773,7 @@ func _start_final_gaze() -> void:
 
 
 func _show_final_line() -> void:
-	_set_line(StoryText.FINAL_LINE)
+	_set_line(StoryText.FINAL_LINE, "Grandpa?")
 	_finish_text_reveal()
 
 

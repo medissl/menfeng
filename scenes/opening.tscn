@@ -1172,7 +1172,7 @@ theme_override_fonts/font = ExtResource("7")
 theme_override_font_sizes/font_size = 26
 theme_override_colors/font_color = Color(0.79, 0.72, 0.62, 1)
 horizontal_alignment = 1
-text = "thank you for plating :D -Medi"
+text = "thank you for playing :D -Medi"
 
 [node name="SceneCurtain" type="ColorRect" parent="."]
 unique_name_in_owner = true
