@@ -44,6 +44,7 @@ const RITE_CHANT := preload("res://assets/audio/rite-chant.wav")
 const OFFERING_FIRE := preload("res://assets/audio/offering-fire.wav")
 const GRANDPA_LAUGH := preload("res://assets/audio/doorway-laugh.wav")
 const WRIST_CHAIN := preload("res://assets/audio/wrist-chain.wav")
+const COUCH_SHIFT := preload("res://assets/audio/couch-shift.wav")
 const VESSEL := preload("res://assets/finale/vessel.png")
 const HOSPITAL_SLIPS := preload("res://assets/finale/hospital-slips.png")
 const RECEIPT_BACK := preload("res://assets/finale/receipt-back.png")
@@ -64,6 +65,8 @@ const PEEK_WATCHER := preload("res://assets/finale/watcher-peek.png")
 const STANDING_WATCHER := preload("res://assets/finale/watcher-standing.png")
 const WATCHER_HOLD := 1.65
 const PEEK_WATCHER_HOLD := 0.78
+const FIRE_DELAY := 0.28
+const TASK_DISPLAY_SECONDS := 3.8
 const CUP_NAMES := ["Left cup", "Middle cup", "Right cup"]
 const CheckpointStore := preload("res://scenes/checkpoint_store.gd")
 const CHECKPOINTS := {
@@ -279,6 +282,7 @@ const INSPECTION_IMAGES := {
 @onready var chant: AudioStreamPlayer = %Chant
 @onready var pickup: AudioStreamPlayer = %Pickup
 @onready var rural_night: AudioStreamPlayer = %RuralNight
+@onready var night_wind: AudioStreamPlayer = %NightWind
 @onready var water_drip: AudioStreamPlayer = %WaterDrip
 @onready var page_turn: AudioStreamPlayer = %PageTurn
 @onready var concrete_steps: AudioStreamPlayer = %ConcreteSteps
@@ -296,7 +300,7 @@ const INSPECTION_IMAGES := {
 @onready var ui_open: AudioStreamPlayer = %UIOpen
 @onready var audio_players: Array[AudioStreamPlayer] = [
 	room_tone, settle, music, engine, car_exit, wood_door, rain, chant, pickup,
-	rural_night, water_drip, page_turn, concrete_steps, cough, tape_sound, match_strike, phone_ring, pour_sound, scare_sound, memory_percussion,
+	rural_night, night_wind, water_drip, page_turn, concrete_steps, cough, tape_sound, match_strike, phone_ring, pour_sound, scare_sound, memory_percussion,
 ]
 
 var screen := Screen.TITLE
@@ -357,6 +361,8 @@ var audio_fade: Tween
 var overlay_fade: Tween
 var save_feedback: Tween
 var checkpoint_stage := Stage.ARRIVAL
+var task_notice: Tween
+var announced_task := ""
 var rain_stopped := false
 var arriving := false
 var blackout := false
@@ -408,9 +414,7 @@ func _connect_ui_sounds() -> void:
 			button.mouse_entered.connect(_play_ui_hover.bind(button))
 			if button != %TitleSettings:
 				button.pressed.connect(_play_ui_select)
-	for button: BaseButton in [%Pause, %InventoryButton]:
-		button.mouse_entered.connect(_play_ui_hover.bind(button))
-	for button: BaseButton in [action, turn_page, %AdvanceBackdrop, %TapeDeck, %TapeBack, %TapeEarlier, %TapeLater]:
+	for button: BaseButton in [%TapeEarlier, %TapeLater]:
 		button.pressed.connect(_play_ui_select)
 	for slider: Slider in options.get_node("VolumeControls").find_children("*", "Slider", true, false):
 		slider.mouse_entered.connect(_play_ui_hover.bind(slider))
@@ -540,6 +544,8 @@ func _advance(perform_action := false) -> void:
 				_play_scare(WRIST_CHAIN, -17.0, "Soft metal clicks behind the door")
 			elif screen == Screen.BEDROOM_ECHO and narration_index == 2:
 				_play_scare(WOOD_RUN, -12.0, "Light footsteps on this side of the door")
+			elif screen == Screen.SOFA_MEMORY and narration_index == 2:
+				_play_scare(COUCH_SHIFT, -19.0, "")
 			if screen == Screen.HALL and stage == Stage.FINAL_TAPE and narration_index == 1:
 				_queue_scare(WRIST_CHAIN, -22.0, "Faint metal clicks deeper in the house", 0.9)
 			elif screen == Screen.HALL and not rain_stopped and narration_index == lines.size() - 1:
@@ -620,7 +626,9 @@ func _show_screen(next: Screen) -> void:
 	if blackout:
 		return
 	blackout = true
-	%Objective.hide()
+	_hide_task_notice()
+	if screen not in [Screen.BURNING, Screen.LISTEN, Screen.REVEAL]:
+		_stop_scare()
 	%SceneCurtain.mouse_filter = Control.MOUSE_FILTER_STOP
 	var focus := get_viewport().gui_get_focus_owner()
 	if focus:
@@ -644,8 +652,10 @@ func _show_screen(next: Screen) -> void:
 			fade.tween_interval(concrete_steps.stream.get_length())
 		fade.tween_callback(wood_door.play)
 		fade.tween_interval(maxf(wood_door.stream.get_length() - 1.0, 0.0))
-	if screen == Screen.BURNING and scare_sound.playing:
-		var remaining := scare_sound.stream.get_length() - scare_sound.get_playback_position()
+	if screen == Screen.BURNING:
+		var remaining := FIRE_DELAY + OFFERING_FIRE.get_length() - scene_time
+		if scare_sound.playing and scare_sound.stream == OFFERING_FIRE:
+			remaining = OFFERING_FIRE.get_length() - scare_sound.get_playback_position()
 		fade.tween_interval(maxf(remaining - 0.45, 0.0))
 	fade.tween_callback(_enter_screen.bind(next))
 	if screen == Screen.DRIVE and next == Screen.YARD:
@@ -668,6 +678,7 @@ func _enter_screen(next: Screen) -> void:
 	picture.set_shader_parameter("reveal_ah_ma", 0.0)
 	var previous := screen
 	if next == Screen.TITLE:
+		announced_task = ""
 		if save_feedback and save_feedback.is_valid():
 			save_feedback.kill()
 		%SaveNotice.hide()
@@ -779,9 +790,9 @@ func _finish_transition() -> void:
 	elif screen == Screen.WARDROBE and not shelf_lifted and not wardrobe_pressure_started:
 		wardrobe_pressure_started = true
 		_queue_scare(WOOD_RUN, -17.0, "Faint steps out in the hall", 2.0)
-		scare_sequence.tween_interval(3.0)
+		scare_sequence.tween_interval(WOOD_RUN.get_length() + 0.35)
 		scare_sequence.tween_callback(_play_scare.bind(WOOD_RUN, -7.0, "Footsteps just outside the room"))
-		scare_sequence.tween_interval(1.7)
+		scare_sequence.tween_interval(WOOD_RUN.get_length() + 0.12)
 		scare_sequence.tween_callback(_play_scare.bind(FAR_DOOR_SLAM, -9.0, "The door bangs behind you"))
 	elif screen == Screen.VESSEL_OPEN:
 		_play_scare(VESSEL_LID, -7.0, "Ceramic scrapes against ceramic")
@@ -789,7 +800,7 @@ func _finish_transition() -> void:
 		_play_scare(RITE_CHANT, -14.0, "A familiar cadence under your breath")
 	elif screen == Screen.BURNING:
 		match_strike.play()
-		_play_scare(OFFERING_FIRE, -7.0, "Dry paper crackles in the burner")
+		_queue_scare(OFFERING_FIRE, -7.0, "Dry paper crackles in the burner", FIRE_DELAY)
 	elif screen == Screen.RITUAL_MEMORY:
 		memory_percussion.play()
 		_play_scare(RITE_CHANT, -8.5, "Drum, gong and chanting in the yard")
@@ -894,9 +905,14 @@ func _mix_scene_audio() -> void:
 		Screen.INTRO, Screen.DRIVE: music_level = -22.0
 		Screen.MEMORY, Screen.PEEK, Screen.MORNING, Screen.SOFA_MEMORY: music_level = -37.0
 		Screen.TAPE: music_level = -49.0
-	if stage >= Stage.FINAL_TAPE:
+		Screen.CREDITS: music_level = -19.0
+		Screen.END_CARD: music_level = -24.0
+	music.stream_paused = _score_paused()
+	var music_fade := 1.35 if screen == Screen.CREDITS else 0.65
+	if music.stream_paused:
 		music_level = -80.0
-	audio_fade.tween_property(music, "volume_db", music_level, 0.65)
+		music_fade = 0.0
+	audio_fade.tween_property(music, "volume_db", music_level, music_fade)
 	var rain_level := -60.0
 	if not rain_stopped:
 		match screen:
@@ -904,10 +920,18 @@ func _mix_scene_audio() -> void:
 			Screen.YARD, Screen.BURN_AREA: rain_level = -3.0
 			Screen.HALL: rain_level = -17.0
 	var night_level := -60.0
+	var wind_level := -60.0
 	if screen == Screen.BURN_AREA or (screen == Screen.YARD and not arriving):
-		night_level = -5.0 if rain_stopped else -18.0
+		night_level = -8.0 if rain_stopped else -60.0
+		wind_level = -11.0 if rain_stopped else -21.0
 	elif screen == Screen.HALL and rain_stopped:
-		night_level = -18.0
+		night_level = -22.0
+		wind_level = -29.0
+	elif screen in [Screen.KITCHEN, Screen.BEDROOM] and rain_stopped:
+		night_level = -30.0
+		wind_level = -33.0
+	elif screen == Screen.RITUAL_MEMORY:
+		wind_level = -26.0
 	var drip_level := -60.0
 	if screen == Screen.BATHROOM:
 		drip_level = -9.0
@@ -917,13 +941,20 @@ func _mix_scene_audio() -> void:
 		rain_level = -60.0
 		night_level = -60.0
 		drip_level = -60.0
+		if screen != Screen.RITUAL_MEMORY:
+			wind_level = -60.0
 	_fade_ambience(rain, rain_level)
 	_fade_ambience(rural_night, night_level)
+	_fade_ambience(night_wind, wind_level)
 	_fade_ambience(water_drip, drip_level)
 	if arriving:
 		audio_fade.tween_property(engine, "volume_db", -46.0, 0.48)
 		audio_fade.chain().tween_callback(engine.stop)
 	room_tone.volume_db = -26.0 if screen == Screen.PEEK else -20.0
+
+
+func _score_paused() -> bool:
+	return stage >= Stage.FINAL_TAPE and screen not in [Screen.CREDITS, Screen.END_CARD]
 
 
 func _fade_ambience(player: AudioStreamPlayer, level: float) -> void:
@@ -1078,7 +1109,6 @@ func _add_hotspot(label: String, area: Rect2, activate: Callable) -> Button:
 	hotspot.size = area.size
 	hotspot.accessibility_name = label
 	hotspot.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	hotspot.pressed.connect(_play_ui_select)
 	var empty := StyleBoxEmpty.new()
 	for state in [&"normal", &"hover", &"pressed", &"focus"]:
 		hotspot.add_theme_stylebox_override(state, empty)
@@ -1403,6 +1433,7 @@ func _perform_ritual_action() -> void:
 		RitualAction.PLACE:
 			if held_item != &"incense" or not collected_items.has(&"incense"):
 				return
+			_play_ui_select()
 			collected_items.erase(&"incense")
 			held_item = &""
 			stage = Stage.LIGHT_INCENSE
@@ -1619,8 +1650,7 @@ func _apply_room_state() -> void:
 		backdrop.texture = BEDROOM_WITHOUT_INCENSE
 
 
-func _update_objective() -> void:
-	var label: Label = %Objective
+func _current_task() -> String:
 	var task: String = OBJECTIVES.get(stage, "")
 	if stage == Stage.ARRIVAL:
 		if screen == Screen.YARD:
@@ -1637,14 +1667,44 @@ func _update_objective() -> void:
 		task = _vessel_objective()
 	elif stage == Stage.PLACE_PAPER and held_item != &"paper":
 		task = "Hold the folded joss paper from your inventory."
+	return task
+
+
+func _update_objective() -> void:
+	var label: Label = %Objective
+	var task := _current_task()
 	var free_view := INSPECTIONS.has(screen)
 	label.text = task
-	label.visible = free_view and not hotspots.is_empty() and not arriving and not task.is_empty() and not textbox.visible and not blackout
+	var can_show_task := free_view and not hotspots.is_empty() and not arriving and not task.is_empty() and not textbox.visible and not blackout
+	if not can_show_task:
+		_hide_task_notice()
+	elif task != announced_task:
+		_show_task_notice(task)
 	%InventoryButton.visible = stage >= Stage.RESPECTS and free_view and not arriving and not textbox.visible
 	%Carried.visible = %InventoryButton.visible and held_item != &""
 	%HeldDash.visible = %Carried.visible
 	%Carried.text = inventory.held_description(held_item) if %Carried.visible else ""
 	%ReadingShade.visible = textbox.visible or label.visible or %SoundCue.visible
+
+
+func _show_task_notice(task: String) -> void:
+	_hide_task_notice()
+	announced_task = task
+	var label: Label = %Objective
+	label.self_modulate.a = 0.0
+	label.show()
+	task_notice = create_tween()
+	task_notice.tween_property(label, "self_modulate:a", 1.0, 0.16)
+	task_notice.tween_interval(TASK_DISPLAY_SECONDS)
+	task_notice.tween_property(label, "self_modulate:a", 0.0, 0.25)
+	task_notice.tween_callback(label.hide)
+	task_notice.tween_callback(_update_objective)
+
+
+func _hide_task_notice() -> void:
+	if task_notice and task_notice.is_valid():
+		task_notice.kill()
+	%Objective.hide()
 
 
 func _offering_objective() -> String:
@@ -1961,6 +2021,9 @@ func _show_panel(next: Overlay, opener: Control) -> void:
 	%ConfirmNewGame.visible = panel == Overlay.NEW_GAME
 	%InstructionCaption.visible = panel == Overlay.NEW_GAME
 	%VolumeControls.visible = panel != Overlay.NEW_GAME
+	var task := _current_task()
+	%PauseTask.visible = panel == Overlay.PAUSE and not task.is_empty()
+	%PauseTask.text = "Current task\n" + task
 	if panel == Overlay.NEW_GAME:
 		options_title.text = "Start over?"
 		%InstructionCaption.text = "Your current checkpoint will be replaced when the new game first saves."
@@ -2015,6 +2078,7 @@ func _review_instruction() -> void:
 	%InstructionCaption.text = StoryText.INSTRUCTIONS[chapter - 1]
 	%InstructionCaption.show()
 	%VolumeControls.hide()
+	%PauseTask.hide()
 	%ReturnToTitle.hide()
 	%ReplayInstruction.hide()
 	%Resume.position.y = 422.0
@@ -2034,7 +2098,8 @@ func _set_audio_paused(paused: bool) -> void:
 		else:
 			scare_sequence.play()
 	for player in audio_players:
-		player.stream_paused = paused or (player == tape_sound and screen == Screen.TAPE and tape_paused)
+		player.stream_paused = (paused or (player == tape_sound and screen == Screen.TAPE and tape_paused)
+			or (player == music and _score_paused()))
 	if audio_fade and audio_fade.is_valid():
 		if paused:
 			audio_fade.pause()

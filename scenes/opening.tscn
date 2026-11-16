@@ -9,6 +9,7 @@
 [ext_resource type="AudioStream" path="res://assets/audio/phone-ring.wav" id="30"]
 [ext_resource type="Script" path="res://scenes/audio_settings.gd" id="31"]
 [ext_resource type="Texture2D" path="res://assets/ritual/grandpa-portrait.png" id="32"]
+[ext_resource type="AudioStream" path="res://assets/audio/wind-night.wav" id="33"]
 [ext_resource type="FontFile" path="res://assets/fonts/NotoSerifTC-Prologue.woff2" id="29"]
 
 [ext_resource type="FontFile" path="res://assets/fonts/NotoSerifTC-Title.woff2" id="6"]
@@ -500,14 +501,15 @@ expand_mode = 1
 
 [node name="Objective" type="Label" parent="Story"]
 unique_name_in_owner = true
+visible = false
 offset_left = 195
 offset_top = 652
 offset_right = 1085
 offset_bottom = 698
 mouse_filter = 2
 theme_override_fonts/font = ExtResource("7")
-theme_override_font_sizes/font_size = 20
-theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.72, 0.62, 0.51, 1)
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -1053,6 +1055,20 @@ alignment = 0
 text = "Start new game"
 script = ExtResource("25")
 
+[node name="PauseTask" type="Label" parent="Options"]
+unique_name_in_owner = true
+visible = false
+offset_left = 576.0
+offset_top = 195.0
+offset_right = 946.0
+offset_bottom = 318.0
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.78, 0.68, 0.56, 1)
+theme_override_constants/line_spacing = 6
+autowrap_mode = 3
+
 [node name="InstructionCaption" type="Label" parent="Options"]
 unique_name_in_owner = true
 visible = false
@@ -1416,6 +1432,11 @@ stream = ExtResource("14")
 bus = &"SFX"
 unique_name_in_owner = true
 stream = ExtResource("15")
+
+[node name="NightWind" type="AudioStreamPlayer" parent="."]
+bus = &"SFX"
+unique_name_in_owner = true
+stream = ExtResource("33")
 
 [node name="WaterDrip" type="AudioStreamPlayer" parent="."]
 bus = &"SFX"
