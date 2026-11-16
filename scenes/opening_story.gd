@@ -192,14 +192,6 @@ const TAPE_SIX := [
 	["歹勢，我的乖孫。", "I’m sorry, sweetheart."],
 ]
 const TAPES := [TAPE_ONE, TAPE_TWO, TAPE_THREE, TAPE_FOUR, TAPE_FIVE, TAPE_SIX]
-const INSTRUCTIONS := [
-	"拿三支香，插在祖先照片前的香爐。\nLight three sticks of incense at the ancestor altar.",
-	"把阿公的照片擺在祖先桌的香爐旁邊。\nSet Grandpa’s portrait beside the ancestor incense burner.",
-	"祖先桌上擺三個杯子。阿公那杯有缺口，倒米酒。\nSet out the three cups at the ancestor altar. Grandpa drank rice wine. Look for his chipped cup. Take the paper and check the burner and the well.",
-	"我房裡的衣櫃，最下面。有個罐子。\nThe jar is where I used to hide the sweets, at the bottom of my wardrobe. Take it to the covered burner.",
-	"先去看井。再拿鐵盒，到祖先桌前抹一點白粉。\nCheck the well. Take the tin from my dresser and mark your forehead at the ancestor altar. Then burn the paper and jar together.",
-	"看到這裡，先坐好。\nStay seated and watch the last recording.",
-]
 
 const WARDROBE_SHELF := [
 	"The shelf’s too shallow. There’s a seam along the front.",

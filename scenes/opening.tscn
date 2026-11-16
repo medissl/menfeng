@@ -1027,20 +1027,6 @@ text = "Return to title"
 script = ExtResource("25")
 
 
-[node name="ReplayInstruction" type="Button" parent="Options"]
-unique_name_in_owner = true
-visible = false
-offset_left = 92.0
-offset_top = 585.0
-offset_right = 358.0
-offset_bottom = 633.0
-theme_type_variation = &"TextAction"
-theme_override_font_sizes/font_size = 24
-mouse_default_cursor_shape = 2
-alignment = 0
-text = "Replay last instruction"
-script = ExtResource("25")
-
 [node name="ConfirmNewGame" type="Button" parent="Options"]
 unique_name_in_owner = true
 visible = false
@@ -1069,7 +1055,7 @@ theme_override_colors/font_color = Color(0.78, 0.68, 0.56, 1)
 theme_override_constants/line_spacing = 6
 autowrap_mode = 3
 
-[node name="InstructionCaption" type="Label" parent="Options"]
+[node name="NewGameMessage" type="Label" parent="Options"]
 unique_name_in_owner = true
 visible = false
 offset_left = 92.0

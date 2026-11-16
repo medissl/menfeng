@@ -5,7 +5,7 @@ enum Screen {
 	SITTING, GUEST_BEDROOM, BEDROOM, KITCHEN, BATHROOM, BURN_AREA, TAPE, SOFA_MEMORY,
 	WARDROBE, VESSEL_OPEN, RITUAL_MEMORY, MARKED, BURNING, LISTEN, REVEAL, BEDROOM_ECHO, OUTRO_BLACK, CREDITS, END_CARD,
 }
-enum Overlay { NONE, PAUSE, SETTINGS, INVENTORY, INSTRUCTION, NEW_GAME }
+enum Overlay { NONE, PAUSE, SETTINGS, INVENTORY, NEW_GAME }
 enum Stage {
 	ARRIVAL, RESPECTS, NOTE, WATCH_TAPE, TAKE_INCENSE, PLACE_INCENSE, LIGHT_INCENSE,
 	RETURN_TO_TAPE, TAKE_PORTRAIT, PLACE_PORTRAIT, OFFERINGS_TAPE, PREPARE_OFFERINGS, INVITATION_TAPE,
@@ -381,7 +381,6 @@ func _ready() -> void:
 	%Pause.pressed.connect(_show_panel.bind(Overlay.PAUSE, %Pause))
 	%Resume.pressed.connect(_close_panel)
 	%ReturnToTitle.pressed.connect(_return_to_title)
-	%ReplayInstruction.pressed.connect(_review_instruction)
 	%AdvanceBackdrop.pressed.connect(_advance)
 	turn_page.pressed.connect(_advance)
 	action.pressed.connect(_advance.bind(true))
@@ -1996,9 +1995,7 @@ func _set_inspection_zoom(point: Vector2, amount: float, immediate := false, clo
 
 
 func _show_panel(next: Overlay, opener: Control) -> void:
-	var from_instruction := panel == Overlay.INSTRUCTION
-	if not from_instruction:
-		ui_open.play()
+	ui_open.play()
 	overlay_opener = opener
 	panel = next
 	if inspection_tween and inspection_tween.is_running():
@@ -2017,22 +2014,20 @@ func _show_panel(next: Overlay, opener: Control) -> void:
 	%Resume.text = "Resume" if panel == Overlay.PAUSE else "‹ Back"
 	%Resume.position.y = 486.0
 	%ReturnToTitle.visible = panel == Overlay.PAUSE
-	%ReplayInstruction.visible = panel == Overlay.PAUSE and stage >= Stage.TAKE_INCENSE
 	%ConfirmNewGame.visible = panel == Overlay.NEW_GAME
-	%InstructionCaption.visible = panel == Overlay.NEW_GAME
+	%NewGameMessage.visible = panel == Overlay.NEW_GAME
 	%VolumeControls.visible = panel != Overlay.NEW_GAME
 	var task := _current_task()
 	%PauseTask.visible = panel == Overlay.PAUSE and not task.is_empty()
 	%PauseTask.text = "Current task\n" + task
 	if panel == Overlay.NEW_GAME:
 		options_title.text = "Start over?"
-		%InstructionCaption.text = "Your current checkpoint will be replaced when the new game first saves."
+		%NewGameMessage.text = "Your current checkpoint will be replaced when the new game first saves."
 		%Resume.position.y = 386.0
 	if next == Overlay.PAUSE:
 		_set_audio_paused(true)
 	options.show()
-	if not from_instruction:
-		_fade_in_overlay(options)
+	_fade_in_overlay(options)
 	%Resume.grab_focus()
 
 
@@ -2045,10 +2040,6 @@ func _fade_in_overlay(control: Control) -> void:
 
 
 func _close_panel() -> void:
-	if panel == Overlay.INSTRUCTION:
-		_show_panel(Overlay.PAUSE, overlay_opener)
-		%ReplayInstruction.grab_focus()
-		return
 	var was_paused := panel == Overlay.PAUSE
 	panel = Overlay.NONE
 	options.hide()
@@ -2067,23 +2058,6 @@ func _close_panel() -> void:
 	else:
 		_default_focus().grab_focus()
 	overlay_opener = null
-
-
-func _review_instruction() -> void:
-	panel = Overlay.INSTRUCTION
-	var chapter := _latest_tape_chapter()
-	if stage in [Stage.RETURN_TO_TAPE, Stage.OFFERINGS_TAPE, Stage.INVITATION_TAPE, Stage.PREPARATION_TAPE, Stage.FINAL_TAPE]:
-		chapter -= 1
-	options_title.text = "Ah Ma’s last instruction"
-	%InstructionCaption.text = StoryText.INSTRUCTIONS[chapter - 1]
-	%InstructionCaption.show()
-	%VolumeControls.hide()
-	%PauseTask.hide()
-	%ReturnToTitle.hide()
-	%ReplayInstruction.hide()
-	%Resume.position.y = 422.0
-	%Resume.text = "‹ Back"
-	%Resume.grab_focus()
 
 
 func _set_audio_paused(paused: bool) -> void:
