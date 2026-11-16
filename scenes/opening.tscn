@@ -293,12 +293,40 @@ text = "Begin"
 script = ExtResource("25")
 
 
-[node name="TitleSettings" type="Button" parent="OpeningTitle"]
+[node name="Load" type="Button" parent="OpeningTitle"]
 unique_name_in_owner = true
 offset_left = 108
 offset_top = 443
 offset_right = 278
 offset_bottom = 493
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 26
+theme_override_colors/font_disabled_color = Color(0.51, 0.44, 0.37, 1)
+mouse_default_cursor_shape = 2
+alignment = 0
+disabled = true
+text = "Load"
+script = ExtResource("25")
+
+[node name="TitleCheckpoint" type="Label" parent="OpeningTitle"]
+unique_name_in_owner = true
+visible = false
+offset_left = 189.0
+offset_top = 443.0
+offset_right = 422.0
+offset_bottom = 493.0
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.70, 0.57, 0.46, 1)
+vertical_alignment = 1
+
+[node name="TitleSettings" type="Button" parent="OpeningTitle"]
+unique_name_in_owner = true
+offset_left = 108
+offset_top = 493
+offset_right = 278
+offset_bottom = 543
 theme_type_variation = &"TextAction"
 theme_override_font_sizes/font_size = 26
 mouse_default_cursor_shape = 2
@@ -310,9 +338,9 @@ script = ExtResource("25")
 [node name="Quit" type="Button" parent="OpeningTitle"]
 unique_name_in_owner = true
 offset_left = 108
-offset_top = 493
+offset_top = 543
 offset_right = 278
-offset_bottom = 543
+offset_bottom = 593
 theme_type_variation = &"TextAction"
 theme_override_font_sizes/font_size = 26
 mouse_default_cursor_shape = 2
@@ -752,6 +780,37 @@ offset_bottom = 2.0
 mouse_filter = 2
 color = Color(0.67, 0.23, 0.18, 1)
 
+[node name="SaveNotice" type="Control" parent="Story"]
+unique_name_in_owner = true
+visible = false
+offset_left = 1110.0
+offset_top = 609.0
+offset_right = 1240.0
+offset_bottom = 641.0
+mouse_filter = 2
+
+[node name="SaveRing" type="Line2D" parent="Story/SaveNotice"]
+unique_name_in_owner = true
+position = Vector2(119, 16)
+points = PackedVector2Array(0, -7, 4, -5.7, 6.65, -2.16, 6.65, 2.16, 4, 5.7, 0, 7, -4, 5.7, -6.65, 2.16)
+width = 1.4
+default_color = Color(0.78, 0.50, 0.39, 1)
+antialiased = true
+
+[node name="SaveStatus" type="Label" parent="Story/SaveNotice"]
+unique_name_in_owner = true
+offset_right = 101.0
+offset_bottom = 32.0
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.91, 0.84, 0.73, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.95)
+theme_override_constants/shadow_offset_y = 2
+horizontal_alignment = 2
+vertical_alignment = 1
+text = "Saved"
+
 [node name="Options" type="ColorRect" parent="."]
 unique_name_in_owner = true
 anchors_preset = 15
@@ -978,6 +1037,20 @@ theme_override_font_sizes/font_size = 24
 mouse_default_cursor_shape = 2
 alignment = 0
 text = "Replay last instruction"
+script = ExtResource("25")
+
+[node name="ConfirmNewGame" type="Button" parent="Options"]
+unique_name_in_owner = true
+visible = false
+offset_left = 92.0
+offset_top = 331.0
+offset_right = 333.0
+offset_bottom = 379.0
+theme_type_variation = &"TextAction"
+theme_override_font_sizes/font_size = 24
+mouse_default_cursor_shape = 2
+alignment = 0
+text = "Start new game"
 script = ExtResource("25")
 
 [node name="InstructionCaption" type="Label" parent="Options"]

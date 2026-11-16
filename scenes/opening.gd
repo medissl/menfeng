@@ -5,7 +5,7 @@ enum Screen {
 	SITTING, GUEST_BEDROOM, BEDROOM, KITCHEN, BATHROOM, BURN_AREA, TAPE, SOFA_MEMORY,
 	WARDROBE, VESSEL_OPEN, RITUAL_MEMORY, MARKED, BURNING, LISTEN, REVEAL, BEDROOM_ECHO, OUTRO_BLACK, CREDITS, END_CARD,
 }
-enum Overlay { NONE, PAUSE, SETTINGS, INVENTORY, INSTRUCTION }
+enum Overlay { NONE, PAUSE, SETTINGS, INVENTORY, INSTRUCTION, NEW_GAME }
 enum Stage {
 	ARRIVAL, RESPECTS, NOTE, WATCH_TAPE, TAKE_INCENSE, PLACE_INCENSE, LIGHT_INCENSE,
 	RETURN_TO_TAPE, TAKE_PORTRAIT, PLACE_PORTRAIT, OFFERINGS_TAPE, PREPARE_OFFERINGS, INVITATION_TAPE,
@@ -65,6 +65,16 @@ const STANDING_WATCHER := preload("res://assets/finale/watcher-standing.png")
 const WATCHER_HOLD := 1.65
 const PEEK_WATCHER_HOLD := 0.78
 const CUP_NAMES := ["Left cup", "Middle cup", "Right cup"]
+const CheckpointStore := preload("res://scenes/checkpoint_store.gd")
+const CHECKPOINTS := {
+	Stage.RESPECTS: ["arrival", Screen.HALL, "Ah Ma’s house"],
+	Stage.TAKE_INCENSE: ["after_tape_1", Screen.SITTING, "After Chapter 1"],
+	Stage.TAKE_PORTRAIT: ["after_tape_2", Screen.SITTING, "After Chapter 2"],
+	Stage.PREPARE_OFFERINGS: ["after_tape_3", Screen.SITTING, "After Chapter 3"],
+	Stage.TAKE_VESSEL: ["after_tape_4", Screen.SITTING, "After Chapter 4"],
+	Stage.RETURN_TO_WELL: ["after_tape_5", Screen.SITTING, "After Chapter 5"],
+	Stage.FINAL_TAPE: ["final_recording", Screen.BURN_AREA, "Before the final recording"],
+}
 
 const OBJECTIVES := {
 	Stage.RESPECTS: "Speak to Ah Ma at the ancestor altar beside Pek Kong.",
@@ -345,6 +355,8 @@ var credits_roll: Tween
 var action_underline_width := 0.0
 var audio_fade: Tween
 var overlay_fade: Tween
+var save_feedback: Tween
+var checkpoint_stage := Stage.ARRIVAL
 var rain_stopped := false
 var arriving := false
 var blackout := false
@@ -355,7 +367,9 @@ func _ready() -> void:
 	ui_hover.stream = preload("res://assets/audio/menu-hover.wav")
 	ui_select.stream = preload("res://assets/audio/menu-select.wav")
 	_connect_ui_sounds()
-	%Begin.pressed.connect(_show_screen.bind(Screen.INTRO))
+	%Begin.pressed.connect(_begin_game)
+	%Load.pressed.connect(_load_game)
+	%ConfirmNewGame.pressed.connect(_start_new_game)
 	%Quit.pressed.connect(get_tree().quit)
 	%TitleSettings.pressed.connect(_show_panel.bind(Overlay.SETTINGS, %TitleSettings))
 	%Pause.pressed.connect(_show_panel.bind(Overlay.PAUSE, %Pause))
@@ -654,6 +668,11 @@ func _enter_screen(next: Screen) -> void:
 	picture.set_shader_parameter("reveal_ah_ma", 0.0)
 	var previous := screen
 	if next == Screen.TITLE:
+		if save_feedback and save_feedback.is_valid():
+			save_feedback.kill()
+		%SaveNotice.hide()
+		checkpoint_stage = Stage.ARRIVAL
+		_update_load_button()
 		seen_arrivals.clear()
 		confession_resume_pending = false
 		first_watcher_seen = false
@@ -792,6 +811,8 @@ func _finish_transition() -> void:
 	elif screen == Screen.END_CARD:
 		_set_action_label("Return to title")
 		action.grab_focus()
+	elif screen == Screen.BURN_AREA and stage == Stage.FINAL_TAPE:
+		_autosave_checkpoint()
 	_update_objective()
 	if not arriving and screen not in [Screen.INTRO, Screen.LISTEN, Screen.REVEAL, Screen.OUTRO_BLACK, Screen.CREDITS, Screen.END_CARD]:
 		var target := hotspots[0] if keyboard_navigation and not hotspots.is_empty() else _default_focus()
@@ -1035,6 +1056,8 @@ func _show_exploration() -> void:
 	if screen == Screen.GUEST_BEDROOM and stage >= Stage.RETURN_TO_WELL and not bedroom_echo_seen:
 		_add_hotspot("Look back at the doorway", Rect2(28, 118, 118, 420), _look_back_at_doorway)
 	if screen == Screen.HALL:
+		if stage == Stage.RESPECTS:
+			_autosave_checkpoint()
 		if stage == Stage.RETURN_TO_TAPE and not first_watcher_seen:
 			first_watcher_seen = true
 			_show_watcher(PEEK_WATCHER, Vector4(0.911, 0.225, 0.055, 0.245), 0.18)
@@ -1740,6 +1763,7 @@ func _next_tape_line(resuming := false) -> void:
 		_set_action_label("")
 		_default_focus().grab_focus()
 	else:
+		var previous_stage := stage
 		if tape_chapter == 1 and stage == Stage.WATCH_TAPE:
 			stage = Stage.TAKE_INCENSE
 		elif tape_chapter == 2 and stage == Stage.RETURN_TO_TAPE:
@@ -1757,6 +1781,8 @@ func _next_tape_line(resuming := false) -> void:
 			tape_sound.stop()
 			_show_screen(Screen.LISTEN)
 			return
+		if stage != previous_stage:
+			_autosave_checkpoint()
 		_set_line("")
 		_set_action_label("")
 		tape_sound.stop()
@@ -1928,12 +1954,17 @@ func _show_panel(next: Overlay, opener: Control) -> void:
 		_fade_in_overlay(inventory)
 		return
 	options_title.text = "Settings" if panel == Overlay.SETTINGS else "Paused"
-	%Resume.text = "‹ Back" if panel == Overlay.SETTINGS else "Resume"
+	%Resume.text = "Resume" if panel == Overlay.PAUSE else "‹ Back"
 	%Resume.position.y = 486.0
 	%ReturnToTitle.visible = panel == Overlay.PAUSE
 	%ReplayInstruction.visible = panel == Overlay.PAUSE and stage >= Stage.TAKE_INCENSE
-	%InstructionCaption.hide()
-	%VolumeControls.show()
+	%ConfirmNewGame.visible = panel == Overlay.NEW_GAME
+	%InstructionCaption.visible = panel == Overlay.NEW_GAME
+	%VolumeControls.visible = panel != Overlay.NEW_GAME
+	if panel == Overlay.NEW_GAME:
+		options_title.text = "Start over?"
+		%InstructionCaption.text = "Your current checkpoint will be replaced when the new game first saves."
+		%Resume.position.y = 386.0
 	if next == Overlay.PAUSE:
 		_set_audio_paused(true)
 	options.show()
@@ -2014,6 +2045,107 @@ func _set_audio_paused(paused: bool) -> void:
 func _return_to_title() -> void:
 	_close_panel()
 	_show_screen(Screen.TITLE)
+
+
+func _begin_game() -> void:
+	if %Load.disabled:
+		_start_new_game()
+	else:
+		_show_panel(Overlay.NEW_GAME, %Begin)
+
+
+func _start_new_game() -> void:
+	if panel == Overlay.NEW_GAME:
+		_close_panel()
+	_show_screen(Screen.INTRO)
+
+
+func _get_checkpoint_stage(data: ConfigFile) -> Stage:
+	if data:
+		var id: Variant = data.get_value("Checkpoint", "Id", "")
+		for milestone: Stage in CHECKPOINTS:
+			if CHECKPOINTS[milestone][0] == id:
+				return milestone
+	return Stage.ARRIVAL
+
+
+func _update_load_button() -> void:
+	var found := _get_checkpoint_stage(CheckpointStore.read_checkpoint())
+	%Load.disabled = found == Stage.ARRIVAL
+	%TitleCheckpoint.visible = not %Load.disabled
+	%TitleCheckpoint.text = "" if %Load.disabled else CHECKPOINTS[found][2]
+	%Load.accessibility_description = "No saved checkpoint" if %Load.disabled else %TitleCheckpoint.text
+
+
+func _load_game() -> void:
+	var data := CheckpointStore.read_checkpoint()
+	var found := _get_checkpoint_stage(data)
+	if found == Stage.ARRIVAL:
+		_update_load_button()
+		return
+	stage = found
+	checkpoint_stage = found
+	# Checkpoints resume in a room between scenes. Recover the permanent
+	# changes completed by earlier chapters before entering that room.
+	rain_stopped = true
+	seen_arrivals.assign([Screen.YARD, Screen.HALL])
+	if data.get_value("Story", "GuestRoomSeen", false) == true:
+		seen_arrivals.append(Screen.GUEST_BEDROOM)
+	bedroom_echo_seen = data.get_value("Story", "BedroomEchoSeen", false) == true
+	shelf_wedge_found = data.get_value("Story", "ShelfWedgeFound", false) == true
+	matches_found = stage >= Stage.TAKE_PORTRAIT
+	first_watcher_seen = matches_found
+	if stage >= Stage.TAKE_VESSEL:
+		used_offerings.assign([&"cups", &"tea", &"wine"])
+		tea_cups = 3
+		heard_giggle = true
+		burner_checked = true
+		well_checked = true
+		if stage < Stage.FINAL_TAPE:
+			collected_items.append(&"paper")
+			if data.get_value("Story", "HoldingPaper", false) == true:
+				held_item = &"paper"
+	if stage >= Stage.RETURN_TO_WELL:
+		passing_watcher_seen = true
+		wardrobe_pressure_started = true
+		shelf_wedge_found = true
+		shelf_lifted = true
+		slips_read = true
+		vessel_opened = true
+		vessel_at_burner = stage < Stage.FINAL_TAPE
+		seen_arrivals.append(Screen.WARDROBE)
+	_show_screen(CHECKPOINTS[stage][1])
+
+
+func _autosave_checkpoint() -> void:
+	if not CHECKPOINTS.has(stage) or stage <= checkpoint_stage:
+		return
+	var result := CheckpointStore.write_checkpoint(CHECKPOINTS[stage][0], {
+		"GuestRoomSeen": seen_arrivals.has(Screen.GUEST_BEDROOM),
+		"BedroomEchoSeen": bedroom_echo_seen,
+		"ShelfWedgeFound": shelf_wedge_found,
+		"HoldingPaper": held_item == &"paper",
+	})
+	if result == OK:
+		checkpoint_stage = stage
+	_show_save_notice(result == OK)
+
+
+func _show_save_notice(saved: bool) -> void:
+	if save_feedback and save_feedback.is_valid():
+		save_feedback.kill()
+	var notice: Control = %SaveNotice
+	var ring: Line2D = %SaveRing
+	ring.rotation = 0.0
+	%SaveStatus.text = "Saved" if saved else "Save failed"
+	notice.modulate.a = 0.0
+	notice.show()
+	save_feedback = create_tween()
+	save_feedback.tween_property(notice, "modulate:a", 1.0, 0.15)
+	save_feedback.parallel().tween_property(ring, "rotation", TAU, 0.68)
+	save_feedback.tween_interval(1.25)
+	save_feedback.tween_property(notice, "modulate:a", 0.0, 0.28)
+	save_feedback.tween_callback(notice.hide)
 
 
 func _set_action_label(label: String) -> void:

@@ -25,7 +25,7 @@ func set_keyboard_navigation(enabled: bool) -> void:
 func _update_underline() -> void:
 	if underline_tween:
 		underline_tween.kill()
-	if not is_visible_in_tree():
+	if disabled or not is_visible_in_tree():
 		_set_underline_amount(0.0)
 		return
 	var target := 1.0 if is_hovered() or (keyboard_navigation and has_focus()) else 0.0

@@ -8,11 +8,14 @@ Explore the house, inspect what she left behind, and follow the recording one ch
 
 ## Play on Windows
 
-[Download MENFENG 1.0.0 for Windows x64](https://github.com/medissl/menfeng/releases/download/v1.0.0/MENFENG-1.0.0-Windows-x64.zip). Extract the ZIP and open `MENFENG.exe`. The game is free to play, runs offline, and requires no installer.
+[Download MENFENG 1.1.0 for Windows x64](https://github.com/medissl/menfeng/releases/download/v1.1.0/MENFENG-1.1.0-Windows-x64.zip). Extract the ZIP and open `MENFENG.exe`. The game is free to play, runs offline, and requires no installer.
 
 - **Left click** to inspect, move, or advance dialogue. A click during typing reveals the whole line.
 - **I** opens the inventory when it’s available. Select an item and choose **Hold item** to use it in the house.
 - **Esc** opens or closes the menu. Use **Replay last instruction** for Ah Ma’s last available directions.
+- **Load** resumes the latest autosave. The game saves after you enter Ah Ma’s house, after Chapters 1–5, and before the final recording. Look for **Saved** in the lower-right corner.
+
+Settings are available from the title and pause menus. Choose **Windowed** or **Fullscreen**, toggle V-Sync, set dialogue to Slow, Normal, Fast, or Instant, and adjust Master, Music, and SFX volumes.
 
 The game depicts grief and disturbing ritual imagery and uses intermittent analog screen distortion and sudden sounds.
 
